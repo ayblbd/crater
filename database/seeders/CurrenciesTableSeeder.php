@@ -580,8 +580,8 @@ class CurrenciesTableSeeder extends Seeder
                 'code' => 'MAD',
                 'symbol' => 'DH',
                 'precision' => '2',
-                'thousand_separator' => ',',
-                'decimal_separator' => '.',
+                'thousand_separator' => ' ',
+                'decimal_separator' => ',',
             ],
             [
                 'name' => 'Jamaican Dollar',
