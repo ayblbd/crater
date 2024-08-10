@@ -30,6 +30,11 @@ class CompaniesRequest extends FormRequest
             'currency' => [
                 'required',
             ],
+            'ice' => [
+                'required',
+                Rule::unique('companies'),
+                'string'
+            ],
             'address.name' => [
                 'nullable',
             ],

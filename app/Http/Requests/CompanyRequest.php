@@ -31,6 +31,10 @@ class CompanyRequest extends FormRequest
             'tax_id' => [
                 'nullable',
             ],
+            'ice' => [
+                'required',
+                Rule::unique('companies')->ignore($this->header('company'), 'id'),
+            ],
             'slug' => [
                 'nullable',
             ],
@@ -47,7 +51,8 @@ class CompanyRequest extends FormRequest
                 'name',
                 'slug',
                 'vat_id',
-                'tax_id',
+                'tax_id',,
+                'ice',
             ])
             ->toArray();
     }

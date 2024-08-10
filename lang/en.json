@@ -911,6 +911,7 @@
       "tax_id": "Tax Identification Number",
       "vat_id": "VAT Identification Number",
       "company_logo": "Company Logo",
+      "ice": "ICE",
       "section_description": "Information about your company that will be displayed on invoices, estimates and other documents created by InvoiceShelf.",
       "phone": "Phone",
       "country": "Country",

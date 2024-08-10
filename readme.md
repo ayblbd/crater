@@ -10,6 +10,18 @@ The Web Application is made using Laravel & VueJS while the Mobile Apps are buil
 
 **NOTE:** The docker image files are moved into a separate repository [InvoiceShelf/docker](https://github.com/InvoiceShelf/docker).
 
+## Launching Crater
+
+```bash
+yarn
+composer install
+php artisan reset:app --force
+yarn dev
+php artisan serve
+```
+
+User email and password can be found in : `database/seeds/UserTableSeeder.php`
+
 # Table of Contents
 
 1. [Documentation](#documentation)

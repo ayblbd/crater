@@ -1,9 +1,7 @@
 <template>
   <form @submit.prevent="updateCompanyData">
-    <BaseSettingCard
-      :title="$t('settings.company_info.company_info')"
-      :description="$t('settings.company_info.section_description')"
-    >
+    <BaseSettingCard :title="$t('settings.company_info.company_info')"
+      :description="$t('settings.company_info.section_description')">
       <BaseInputGrid class="mt-5">
         <BaseInputGroup :label="$t('settings.company_info.company_logo')">
           <BaseFileUploader
@@ -69,6 +67,10 @@
           <BaseInput v-model="companyForm.address.zip" />
         </BaseInputGroup>
 
+        <BaseInputGroup :label="$tc('settings.company_info.ice')">
+          <BaseInput v-model="companyForm.ice" type="text"/>
+        </BaseInputGroup>
+
         <div>
           <BaseInputGroup :label="$t('settings.company_info.address')">
             <BaseTextarea
@@ -96,12 +98,7 @@
         </div>
       </BaseInputGrid>
 
-      <BaseButton
-        :loading="isSaving"
-        :disabled="isSaving"
-        type="submit"
-        class="mt-6"
-      >
+      <BaseButton :loading="isSaving" :disabled="isSaving" type="submit" class="mt-6">
         <template #left="slotProps">
           <BaseIcon v-if="!isSaving" :class="slotProps.class" name="SaveIcon" />
         </template>
@@ -134,14 +131,14 @@
 </template>
 
 <script setup>
-import { reactive, ref, inject, computed } from 'vue'
-import { useGlobalStore } from '@/scripts/admin/stores/global'
-import { useCompanyStore } from '@/scripts/admin/stores/company'
-import { useI18n } from 'vue-i18n'
-import { required, minLength, helpers } from '@vuelidate/validators'
-import { useVuelidate } from '@vuelidate/core'
-import { useModalStore } from '@/scripts/stores/modal'
 import DeleteCompanyModal from '@/scripts/admin/components/modal-components/DeleteCompanyModal.vue'
+import { useCompanyStore } from '@/scripts/admin/stores/company'
+import { useGlobalStore } from '@/scripts/admin/stores/global'
+import { useModalStore } from '@/scripts/stores/modal'
+import { useVuelidate } from '@vuelidate/core'
+import { helpers, minLength, required } from '@vuelidate/validators'
+import { computed, inject, reactive, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const companyStore = useCompanyStore()
 const globalStore = useGlobalStore()
@@ -154,6 +151,7 @@ let isSaving = ref(false)
 const companyForm = reactive({
   name: null,
   logo: null,
+  ice: null,
   tax_id: null,
   vat_id: null,
   address: {
