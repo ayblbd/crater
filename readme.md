@@ -45,6 +45,10 @@ User email and password can be found in : `database/seeds/UserTableSeeder.php`
   - [Copyright](#copyright)
   - [Translate](#translate)
   - [License](#license)
+- [Roadmap](#roadmap-1)
+  - [Copyright](#copyright-1)
+  - [Translate](#translate-1)
+  - [License](#license-1)
 
 ## Documentation
 

@@ -564,6 +564,11 @@ class Invoice extends Model implements HasMedia
         App::setLocale($locale);
 
         $logo = $company->logo_path;
+        $ice = $company->ice;
+        $patent = $company->patent;
+        $if = $company->if;
+        $rc = $company->rc;
+        $tp = $company->tp;
 
         view()->share([
             'invoice' => $this,
@@ -574,6 +579,11 @@ class Invoice extends Model implements HasMedia
             'notes' => $this->getNotes(),
             'logo' => $logo ?? null,
             'taxes' => $taxes,
+            'ice' => $ice,
+            'patent' => $patent,
+            'if' => $if,
+            'rc' => $rc,
+            'tp' => $tp,
         ]);
 
         if (request()->has('preview')) {
