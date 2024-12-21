@@ -76,6 +76,7 @@ test('update company', function () {
         'patent' => '123456789',
         'rc' => '123456789rc',
         'if'=> '111111if',
+        'tp' => '111111tp',
         'address_street_1' => 'test1',
         'address_street_2' => 'test2',
         'phone' => '1234567890',

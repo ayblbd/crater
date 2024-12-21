@@ -44,6 +44,9 @@ class CompaniesRequest extends FormRequest
             'if' => [
                 'nullable',
             ],
+            'tp' => [
+                'nullable',
+            ],
             'address.name' => [
                 'nullable',
             ],

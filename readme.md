@@ -129,7 +129,7 @@ See [LICENSE](LICENSE) for details.
 * [x] Add Patent
 * [x] Commercial Register
 * [x] Fiscal identifier
-* [ ] Taxe professionnelle
+* [x] Taxe professionnelle
 * [ ] Activité
 ~~Here's a rough roadmap of things to come (not in any specific order):
 

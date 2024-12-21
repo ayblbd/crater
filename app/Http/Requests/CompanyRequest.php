@@ -44,6 +44,9 @@ class CompanyRequest extends FormRequest
             'if' => [
                 'nullable',
             ],
+            'tp' => [
+                'nullable',
+            ],
             'slug' => [
                 'nullable',
             ],
@@ -65,6 +68,7 @@ class CompanyRequest extends FormRequest
                 'rc',
                 'patent',
                 'if',
+                'tp',
             ])
             ->toArray();
     }
