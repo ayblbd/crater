@@ -79,6 +79,11 @@
           <BaseInput v-model="companyForm.rc" type="text"/>
         </BaseInputGroup>
 
+
+        <BaseInputGroup :label="$tc('settings.company_info.if')">
+          <BaseInput v-model="companyForm.if" type="text"/>
+        </BaseInputGroup>
+
         <div>
           <BaseInputGroup :label="$t('settings.company_info.address')">
             <BaseTextarea
@@ -164,6 +169,7 @@ const companyForm = reactive({
   vat_id: null,
   patent: null,
   rc: null,
+  if: null,
   address: {
     address_street_1: '',
     address_street_2: '',

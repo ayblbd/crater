@@ -31,6 +31,7 @@ class UsersTableSeeder extends Seeder
             'ice' => '11112222',
             'patent' => '123456',
             'rc' => '123456rc',
+            'if' => '123456',
         ]);
 
         $company->unique_hash = Hashids::connection(Company::class)->encode($company->id);
