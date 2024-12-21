@@ -20,6 +20,7 @@ class CompanyResource extends JsonResource
             'tax_id' => $this->tax_id,
             'ice' => $this->ice,
             'patent' => $this->patent,
+            'rc' => $this->rc,
             'logo' => $this->logo,
             'logo_path' => $this->logo_path,
             'unique_hash' => $this->unique_hash,

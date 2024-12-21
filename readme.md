@@ -36,14 +36,15 @@ User email and password can be found in : `database/seeds/UserTableSeeder.php`
 
 # Table of Contents
 
-1. [Documentation](#documentation)
-2. [Download](#download)
-3. [Mobile Apps](#mobile-apps)
-4. [Discord - **NEW**](#discord) 🔥
-5. [Roadmap](#roadmap)
-6. [Credits](#credits)
-7. [Help us translate](#translate)
-8. [License](#license)
+- [Table of Contents](#table-of-contents)
+  - [Documentation](#documentation)
+  - [Download](#download)
+  - [Mobile Apps](#mobile-apps)
+  - [Discord](#discord)
+  - [Roadmap](#roadmap)
+  - [Copyright](#copyright)
+  - [Translate](#translate)
+  - [License](#license)
 
 ## Documentation
 

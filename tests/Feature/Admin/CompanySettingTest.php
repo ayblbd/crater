@@ -74,6 +74,7 @@ test('update company', function () {
         'city' => 'state',
         'ice' => '123456789',
         'patent' => '123456789',
+        'rc' => '123456789rc',
         'address_street_1' => 'test1',
         'address_street_2' => 'test2',
         'phone' => '1234567890',

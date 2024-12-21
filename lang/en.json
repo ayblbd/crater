@@ -914,6 +914,7 @@
       "ice": "ICE",
       "section_description": "Information about your company that will be displayed on invoices, estimates and other documents created by InvoiceShelf.",
       "patent": "Patent",
+      "rc": "Commercial Register",
       "section_description": "Information about your company that will be displayed on invoices, estimates and other documents created by Crater.",
       "phone": "Phone",
       "country": "Country",

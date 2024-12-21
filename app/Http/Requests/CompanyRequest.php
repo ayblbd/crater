@@ -38,6 +38,9 @@ class CompanyRequest extends FormRequest
             'patent' => [
                 'nullable',
             ],
+            'rc' => [
+                'nullable',
+            ],
             'slug' => [
                 'nullable',
             ],
@@ -56,6 +59,7 @@ class CompanyRequest extends FormRequest
                 'vat_id',
                 'tax_id',,
                 'ice',
+                'rc',
                 'patent',
             ])
             ->toArray();

@@ -38,6 +38,9 @@ class CompaniesRequest extends FormRequest
             'patent' => [
                 'nullable',
             ],
+            'rc' => [
+                'nullable',
+            ],
             'address.name' => [
                 'nullable',
             ],

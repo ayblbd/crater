@@ -75,6 +75,10 @@
           <BaseInput v-model="companyForm.patent" type="text"/>
         </BaseInputGroup>
 
+        <BaseInputGroup :label="$tc('settings.company_info.rc')">
+          <BaseInput v-model="companyForm.rc" type="text"/>
+        </BaseInputGroup>
+
         <div>
           <BaseInputGroup :label="$t('settings.company_info.address')">
             <BaseTextarea
@@ -159,6 +163,7 @@ const companyForm = reactive({
   tax_id: null,
   vat_id: null,
   patent: null,
+  rc: null,
   address: {
     address_street_1: '',
     address_street_2: '',
