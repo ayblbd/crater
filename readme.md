@@ -12,11 +12,23 @@ The Web Application is made using Laravel & VueJS while the Mobile Apps are buil
 
 ## Launching Crater
 
+Install PHP 8.2 and enable the following extensions:
+
+* fileinfo extension
+* exif extension
+* sqlite3 extension
+* pdo_sqlite extension
+
+Then run the following commands in order:
+
 ```bash
 yarn
+composer update
 composer install
+cp .env.testing .env
 php artisan reset:app --force
 yarn dev
+php artisan key:generate
 php artisan serve
 ```
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCne extends Migration
+class AddIce extends Migration
 {
     /**
      * Run the migrations.
@@ -15,6 +15,7 @@ class AddCne extends Migration
     {
         Schema::table('companies', function (Blueprint $table) {
             $table->string('ice')->nullable();
+
         });
     }
 
@@ -26,7 +27,7 @@ class AddCne extends Migration
     public function down()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->dropColumn('cne');
+            $table->dropColumn('ice');
         });
     }
 }

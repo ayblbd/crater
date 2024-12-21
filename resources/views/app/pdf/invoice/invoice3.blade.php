@@ -395,7 +395,7 @@
             <p>
             LKIGAI TECHNOLOGY, 10 Rue liberté 3ème étage Appt N°5 Casablanca
             <br>
-            N° du registre commercial: 604481 - ICE : 003392193000032 - Taxe professionelle : 34209111- Idenfiant fiscal : 60132868
+            N° du registre commercial: 604481 - ICE : 003392193000032 - Taxe professionelle : 34209111 - Idenfiant fiscal : 60132868
             </p>
         </div>
 

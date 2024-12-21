@@ -35,6 +35,9 @@ class CompaniesRequest extends FormRequest
                 Rule::unique('companies'),
                 'string'
             ],
+            'patent' => [
+                'nullable',
+            ],
             'address.name' => [
                 'nullable',
             ],
