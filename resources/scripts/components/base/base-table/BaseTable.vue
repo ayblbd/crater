@@ -128,7 +128,7 @@
               class="w-6 h-6 text-gray-400"
             />
 
-            <span class="block mt-1">{{ noResultsMessage }}</span>
+            <span class="block mt-1">{{ $t('general.no_data_found') }}</span>
           </div>
 
           <BaseTablePagination
@@ -188,7 +188,7 @@ const props = defineProps({
   },
 })
 
-let rows = reactive([])
+const rows = ref([])
 let isLoading = ref(false)
 
 let tableColumns = reactive(props.columns.map((column) => new Column(column)))
@@ -309,6 +309,8 @@ function changeSorting(column) {
   }
 
   if (!usesLocalData.value) {
+    if (pagination.value)
+      pagination.value.currentPage = 1
     mapDataToRows()
   }
 }
@@ -326,7 +328,10 @@ async function pageChange(page) {
   await mapDataToRows()
 }
 
-async function refresh() {
+async function refresh(isPreservePage = false) {
+  if (pagination.value && !isPreservePage)
+    pagination.value.currentPage = 1
+
   await mapDataToRows()
 }
 
@@ -334,14 +339,13 @@ function lodashGet(array, key) {
   return get(array, key)
 }
 
-if (usesLocalData.value) {
-  watch(
-    () => props.data,
-    () => {
-      mapDataToRows()
-    }
-  )
-}
+watch(
+  () => props.data,
+  () => {
+    mapDataToRows()
+  },
+  { deep: true }
+)
 
 onMounted(async () => {
   await mapDataToRows()

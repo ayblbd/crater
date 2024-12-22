@@ -1,13 +1,14 @@
 <?php
 
+use App\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceController;
+use App\Http\Requests\RecurringInvoiceRequest;
+use App\Models\InvoiceItem;
+use App\Models\RecurringInvoice;
+use App\Models\User;
 use Carbon\Carbon;
-use Crater\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceController;
-use Crater\Http\Requests\RecurringInvoiceRequest;
-use Crater\Models\InvoiceItem;
-use Crater\Models\RecurringInvoice;
-use Crater\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
@@ -44,7 +45,7 @@ test('store user using a form request', function () {
 test('store recurring invoice', function () {
     $recurringInvoice = RecurringInvoice::factory()->raw();
     $recurringInvoice['items'] = [
-        InvoiceItem::factory()->raw()
+        InvoiceItem::factory()->raw(),
     ];
 
     postJson('api/v1/recurring-invoices', $recurringInvoice)
@@ -77,12 +78,12 @@ test('update user using a form request', function () {
 test('update recurring invoice', function () {
     $recurringInvoice = RecurringInvoice::factory()->create();
     $recurringInvoice['items'] = [
-        InvoiceItem::factory()->raw()
+        InvoiceItem::factory()->raw(),
     ];
 
     $new_recurringInvoice = RecurringInvoice::factory()->raw();
     $new_recurringInvoice['items'] = [
-        InvoiceItem::factory()->raw()
+        InvoiceItem::factory()->raw(),
     ];
 
     putJson("api/v1/recurring-invoices/{$recurringInvoice->id}", $new_recurringInvoice)
@@ -111,18 +112,18 @@ test('delete multiple recurring invoice', function () {
         ]);
 
     foreach ($recurringInvoices as $recurringInvoice) {
-        $this->assertDeleted($recurringInvoice);
+        $this->assertModelMissing($recurringInvoice);
     }
 });
 
 test('calculate frequency for recurring invoice', function () {
     $data = [
         'frequency' => '* * 2 * *',
-        'starts_at' => Carbon::now()->format('Y-m-d')
+        'starts_at' => Carbon::now()->format('Y-m-d'),
     ];
 
     $queryString = http_build_query($data, '', '&');
 
-    getJson("api/v1/recurring-invoice-frequency?".$queryString)
+    getJson('api/v1/recurring-invoice-frequency?'.$queryString)
         ->assertOk();
 });

@@ -1,20 +1,18 @@
 <?php
 
-use Crater\Models\Company;
-use Crater\Models\User;
+use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
-class AddOwnerIdToCompaniesTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('companies', function (Blueprint $table) {
             $table->string('slug')->nullable();
@@ -45,14 +43,14 @@ class AddOwnerIdToCompaniesTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('companies', function (Blueprint $table) {
             $table->dropColumn('slug');
-            $table->dropForeign(['owner_id']);
+            if (config('database.default') !== 'sqlite') {
+                $table->dropForeign(['owner_id']);
+            }
         });
     }
-}
+};

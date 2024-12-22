@@ -1,16 +1,16 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Dashboard;
+namespace App\Http\Controllers\V1\Admin\Dashboard;
 
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\Estimate;
+use App\Models\Expense;
+use App\Models\Invoice;
+use App\Models\Payment;
 use Carbon\Carbon;
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Company;
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\Estimate;
-use Crater\Models\Expense;
-use Crater\Models\Invoice;
-use Crater\Models\Payment;
 use Illuminate\Http\Request;
 use Silber\Bouncer\BouncerFacade;
 
@@ -19,7 +19,6 @@ class DashboardController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request)
@@ -41,15 +40,16 @@ class DashboardController extends Controller
         $start = Carbon::now();
         $end = Carbon::now();
         $terms = explode('-', $fiscalYear);
+        $companyStartMonth = intval($terms[0]);
 
-        if ($terms[0] <= $start->month) {
-            $startDate->month($terms[0])->startOfMonth();
-            $start->month($terms[0])->startOfMonth();
-            $end->month($terms[0])->endOfMonth();
+        if ($companyStartMonth <= $start->month) {
+            $startDate->month($companyStartMonth)->startOfMonth();
+            $start->month($companyStartMonth)->startOfMonth();
+            $end->month($companyStartMonth)->endOfMonth();
         } else {
-            $startDate->subYear()->month($terms[0])->startOfMonth();
-            $start->subYear()->month($terms[0])->startOfMonth();
-            $end->subYear()->month($terms[0])->endOfMonth();
+            $startDate->subYear()->month($companyStartMonth)->startOfMonth();
+            $start->subYear()->month($companyStartMonth)->startOfMonth();
+            $end->subYear()->month($companyStartMonth)->endOfMonth();
         }
 
         if ($request->has('previous_year')) {
@@ -65,8 +65,8 @@ class DashboardController extends Controller
                     'invoice_date',
                     [$start->format('Y-m-d'), $end->format('Y-m-d')]
                 )
-                ->whereCompany()
-                ->sum('base_total')
+                    ->whereCompany()
+                    ->sum('base_total')
             );
             array_push(
                 $expense_totals,
@@ -74,8 +74,8 @@ class DashboardController extends Controller
                     'expense_date',
                     [$start->format('Y-m-d'), $end->format('Y-m-d')]
                 )
-                ->whereCompany()
-                ->sum('base_amount')
+                    ->whereCompany()
+                    ->sum('base_amount')
             );
             array_push(
                 $receipt_totals,
@@ -83,15 +83,15 @@ class DashboardController extends Controller
                     'payment_date',
                     [$start->format('Y-m-d'), $end->format('Y-m-d')]
                 )
-                ->whereCompany()
-                ->sum('base_amount')
+                    ->whereCompany()
+                    ->sum('base_amount')
             );
             array_push(
                 $net_income_totals,
                 ($receipt_totals[$i] - $expense_totals[$i])
             );
             $i++;
-            array_push($months, $start->format('M'));
+            array_push($months, $start->translatedFormat('M'));
             $monthCounter++;
             $end->startOfMonth();
             $start->addMonth()->startOfMonth();
@@ -121,7 +121,7 @@ class DashboardController extends Controller
             ->whereCompany()
             ->sum('base_amount');
 
-        $total_net_income = (int)$total_receipts - (int)$total_expenses;
+        $total_net_income = (int) $total_receipts - (int) $total_expenses;
 
         $chart_data = [
             'months' => $months,

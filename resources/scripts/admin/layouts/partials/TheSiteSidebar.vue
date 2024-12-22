@@ -67,7 +67,7 @@
             <div class="flex items-center shrink-0 px-4 mb-10">
               <MainLogo
                 class="block h-auto max-w-full w-36 text-primary-400"
-                alt="Crater Logo"
+                alt="InvoiceShelf Logo"
               />
             </div>
 
@@ -138,7 +138,7 @@
           hasActiveUrl(item.link)
             ? 'text-primary-500 border-primary-500 bg-gray-100 '
             : 'text-black',
-          'cursor-pointer px-0 pl-6 hover:bg-gray-50 py-3 group flex items-center border-l-4 border-solid border-transparent text-sm not-italic font-medium',
+          'cursor-pointer px-0 pl-6 hover:bg-gray-50 py-3 group flex items-center border-l-4 border-solid text-sm not-italic font-medium',
         ]"
       >
         <BaseIcon

@@ -19,7 +19,7 @@
             to="/admin/dashboard"
           />
           <BaseBreadcrumbItem
-            :title="$tc('invoices.invoice', 2)"
+            :title="$t('invoices.invoice', 2)"
             to="/admin/invoices"
           />
           <BaseBreadcrumbItem
@@ -147,6 +147,7 @@ import {
   decimal,
 } from '@vuelidate/validators'
 import useVuelidate from '@vuelidate/core'
+import { cloneDeep } from 'lodash'
 
 import { useInvoiceStore } from '@/scripts/admin/stores/invoice'
 import { useModuleStore } from '@/scripts/admin/stores/module'
@@ -253,16 +254,35 @@ async function submitForm() {
   v$.value.$touch()
 
   if (v$.value.$invalid) {
+    console.log('Form is invalid:', v$.value.$errors)
     return false
   }
 
   isSaving.value = true
 
-  let data = {
+  let data = cloneDeep({
     ...invoiceStore.newInvoice,
     sub_total: invoiceStore.getSubTotal,
     total: invoiceStore.getTotal,
     tax: invoiceStore.getTotalTax,
+  })
+  if (data.discount_per_item === 'YES') {
+    data.items.forEach((item, index) => {
+      if (item.discount_type === 'fixed'){
+        data.items[index].discount = item.discount * 100
+      }
+    })
+  }
+  else {
+    if (data.discount_type === 'fixed'){
+      data.discount = data.discount * 100
+    }
+  }
+    if (
+    !invoiceStore.newInvoice.tax_per_item === 'YES'
+    && data.taxes.length
+  ){
+    data.tax_type_ids = data.taxes.map(_t => _t.tax_type_id)
   }
 
   try {

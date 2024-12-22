@@ -1,16 +1,14 @@
 <?php
 
-use Crater\Models\Invoice;
+use App\Models\Invoice;
 use Illuminate\Database\Migrations\Migration;
 
-class CalculateBaseDueAmount extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $invoices = Invoice::all();
 
@@ -24,11 +22,9 @@ class CalculateBaseDueAmount extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

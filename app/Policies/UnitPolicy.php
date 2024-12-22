@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Policies;
+namespace App\Policies;
 
-use Crater\Models\Item;
-use Crater\Models\Unit;
-use Crater\Models\User;
+use App\Models\Item;
+use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Silber\Bouncer\BouncerFacade;
 
@@ -15,10 +15,9 @@ class UnitPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \Crater\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         if (BouncerFacade::can('view-item', Item::class)) {
             return true;
@@ -30,11 +29,9 @@ class UnitPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Unit  $unit
      * @return mixed
      */
-    public function view(User $user, Unit $unit)
+    public function view(User $user, Unit $unit): bool
     {
         if (BouncerFacade::can('view-item', Item::class) && $user->hasCompany($unit->company_id)) {
             return true;
@@ -46,10 +43,9 @@ class UnitPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  \Crater\Models\User  $user
      * @return mixed
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         if (BouncerFacade::can('view-item', Item::class)) {
             return true;
@@ -61,11 +57,9 @@ class UnitPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Unit  $unit
      * @return mixed
      */
-    public function update(User $user, Unit $unit)
+    public function update(User $user, Unit $unit): bool
     {
         if (BouncerFacade::can('view-item', Item::class) && $user->hasCompany($unit->company_id)) {
             return true;
@@ -77,11 +71,9 @@ class UnitPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Unit  $unit
      * @return mixed
      */
-    public function delete(User $user, Unit $unit)
+    public function delete(User $user, Unit $unit): bool
     {
         if (BouncerFacade::can('view-item', Item::class) && $user->hasCompany($unit->company_id)) {
             return true;
@@ -93,11 +85,9 @@ class UnitPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Unit  $unit
      * @return mixed
      */
-    public function restore(User $user, Unit $unit)
+    public function restore(User $user, Unit $unit): bool
     {
         if (BouncerFacade::can('view-item', Item::class) && $user->hasCompany($unit->company_id)) {
             return true;
@@ -109,11 +99,9 @@ class UnitPolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Unit  $unit
      * @return mixed
      */
-    public function forceDelete(User $user, Unit $unit)
+    public function forceDelete(User $user, Unit $unit): bool
     {
         if (BouncerFacade::can('view-item', Item::class) && $user->hasCompany($unit->company_id)) {
             return true;

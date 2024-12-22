@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\General;
+namespace App\Http\Controllers\V1\Customer\General;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\Customer\CustomerProfileRequest;
-use Crater\Http\Resources\Customer\CustomerResource;
-use Crater\Models\Company;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Customer\CustomerProfileRequest;
+use App\Http\Resources\Customer\CustomerResource;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,7 +24,7 @@ class ProfileController extends Controller
             $customer->clearMediaCollection('customer_avatar');
 
             $customer->addMediaFromRequest('customer_avatar')
-            ->toMediaCollection('customer_avatar');
+                ->toMediaCollection('customer_avatar');
         }
 
         if ($request->billing !== null) {

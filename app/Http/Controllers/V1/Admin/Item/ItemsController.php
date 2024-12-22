@@ -1,13 +1,13 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Item;
+namespace App\Http\Controllers\V1\Admin\Item;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests;
-use Crater\Http\Requests\DeleteItemsRequest;
-use Crater\Http\Resources\ItemResource;
-use Crater\Models\Item;
-use Crater\Models\TaxType;
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Http\Requests\DeleteItemsRequest;
+use App\Http\Resources\ItemResource;
+use App\Models\Item;
+use App\Models\TaxType;
 use Illuminate\Http\Request;
 
 class ItemsController extends Controller
@@ -15,7 +15,6 @@ class ItemsController extends Controller
     /**
      * Retrieve a list of existing Items.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
@@ -31,7 +30,7 @@ class ItemsController extends Controller
             ->latest()
             ->paginateData($limit);
 
-        return (ItemResource::collection($items))
+        return ItemResource::collection($items)
             ->additional(['meta' => [
                 'tax_types' => TaxType::whereCompany()->latest()->get(),
                 'item_total_count' => Item::whereCompany()->count(),
@@ -41,7 +40,7 @@ class ItemsController extends Controller
     /**
      * Create Item.
      *
-     * @param  Crater\Http\Requests\ItemsRequest $request
+     * @param  App\Http\Requests\ItemsRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Requests\ItemsRequest $request)
@@ -56,7 +55,6 @@ class ItemsController extends Controller
     /**
      * get an existing Item.
      *
-     * @param  Item $item
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Item $item)
@@ -69,8 +67,7 @@ class ItemsController extends Controller
     /**
      * Update an existing Item.
      *
-     * @param  Crater\Http\Requests\ItemsRequest $request
-     * @param  \Crater\Models\Item $item
+     * @param  App\Http\Requests\ItemsRequest  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Requests\ItemsRequest $request, Item $item)
@@ -85,7 +82,7 @@ class ItemsController extends Controller
     /**
      * Delete a list of existing Items.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete(DeleteItemsRequest $request)

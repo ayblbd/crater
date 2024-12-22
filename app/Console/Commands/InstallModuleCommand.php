@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Console\Commands;
+namespace App\Console\Commands;
 
-use Crater\Space\ModuleInstaller;
+use App\Space\ModuleInstaller;
 use Illuminate\Console\Command;
 
 class InstallModuleCommand extends Command
@@ -33,10 +33,8 @@ class InstallModuleCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         ModuleInstaller::complete($this->argument('module'), $this->argument('version'));
 

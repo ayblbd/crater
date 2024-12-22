@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Http\Resources;
+namespace App\Http\Resources;
 
-use Crater\Models\Module as ModelsModule;
-use Crater\Models\Setting;
+use App\Models\Module as ModelsModule;
+use App\Models\Setting;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Nwidart\Modules\Facades\Module;
 
@@ -15,7 +15,7 @@ class ModuleResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         $this->checkPurchased();
         $this->installed_module = ModelsModule::where('name', $this->module_name)->first();
@@ -50,7 +50,7 @@ class ModuleResource extends JsonResource
             'update_available' => $this->updateAvailable(),
             'video_link' => $this->video_link,
             'video_thumbnail' => $this->video_thumbnail,
-            'links' => $this->links
+            'links' => $this->links,
         ];
     }
 
@@ -108,7 +108,7 @@ class ModuleResource extends JsonResource
             return false;
         }
 
-        if (version_compare(Setting::getSetting('version'), $this->latest_module_version->crater_version, '<')) {
+        if (version_compare(Setting::getSetting('version'), $this->latest_module_version->invoiceshelf_version, '<')) {
             return false;
         }
 

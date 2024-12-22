@@ -1,19 +1,17 @@
 <?php
 
-use Crater\Models\Customer;
-use Crater\Models\User;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddSequenceColumn extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('customers', function (Blueprint $table) {
             $table->string('prefix')->nullable()->after('id');
@@ -43,7 +41,7 @@ class AddSequenceColumn extends Migration
                 if ($invoices) {
                     $customerSequence = 1;
                     $invoices->map(function ($invoice) use ($customerSequence) {
-                        $invoiceNumber = explode("-", $invoice->invoice_number);
+                        $invoiceNumber = explode('-', $invoice->invoice_number);
                         $invoice->sequence_number = intval(end($invoiceNumber));
                         $invoice->customer_sequence_number = $customerSequence;
                         $invoice->save();
@@ -55,7 +53,7 @@ class AddSequenceColumn extends Migration
                 if ($estimates) {
                     $customerSequence = 1;
                     $estimates->map(function ($estimate) use ($customerSequence) {
-                        $estimateNumber = explode("-", $estimate->estimate_number);
+                        $estimateNumber = explode('-', $estimate->estimate_number);
                         $estimate->sequence_number = intval(end($estimateNumber));
                         $estimate->customer_sequence_number = $customerSequence;
                         $estimate->save();
@@ -67,7 +65,7 @@ class AddSequenceColumn extends Migration
                 if ($estimates) {
                     $customerSequence = 1;
                     $payments->map(function ($payment) use ($customerSequence) {
-                        $paymentNumber = explode("-", $payment->payment_number);
+                        $paymentNumber = explode('-', $payment->payment_number);
                         $payment->sequence_number = intval(end($paymentNumber));
                         $payment->customer_sequence_number = $customerSequence;
                         $payment->save();
@@ -80,10 +78,8 @@ class AddSequenceColumn extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->dropColumn('sequence_number');
@@ -98,4 +94,4 @@ class AddSequenceColumn extends Migration
             $table->dropColumn('customer_sequence_number');
         });
     }
-}
+};

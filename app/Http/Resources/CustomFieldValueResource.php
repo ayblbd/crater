@@ -1,8 +1,9 @@
 <?php
 
-namespace Crater\Http\Resources;
+namespace App\Http\Resources;
 
-use Crater\Models\CompanySetting;
+use App\Models\CompanySetting;
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CustomFieldValueResource extends JsonResource
@@ -11,9 +12,8 @@ class CustomFieldValueResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,
@@ -49,11 +49,11 @@ class CustomFieldValueResource extends JsonResource
         }
 
         if ($key == 'date_time_answer') {
-            return $answer->format('Y-m-d H:i');
+            return Carbon::parse($answer)->format('Y-m-d H:i');
         }
 
         if ($key == 'date_answer') {
-            return $answer->format(CompanySetting::getSetting('carbon_date_format', $this->company_id));
+            return Carbon::parse($answer)->format(CompanySetting::getSetting('carbon_date_format', $this->company_id));
         }
 
         return $answer;

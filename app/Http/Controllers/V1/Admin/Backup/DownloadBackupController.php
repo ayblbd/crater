@@ -2,9 +2,9 @@
 
 // Implementation taken from nova-backup-tool - https://github.com/spatie/nova-backup-tool/
 
-namespace Crater\Http\Controllers\V1\Admin\Backup;
+namespace App\Http\Controllers\V1\Admin\Backup;
 
-use Crater\Rules\Backup\PathToZip;
+use App\Rules\Backup\PathToZip;
 use Illuminate\Http\Request;
 use Spatie\Backup\BackupDestination\Backup;
 use Spatie\Backup\BackupDestination\BackupDestination;
@@ -41,7 +41,7 @@ class DownloadBackupController extends ApiController
         $downloadHeaders = [
             'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
             'Content-Type' => 'application/zip',
-            'Content-Length' => $backup->size(),
+            'Content-Length' => $backup->sizeInBytes(),
             'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
             'Pragma' => 'public',
         ];

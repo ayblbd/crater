@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Console\Commands;
+namespace App\Console\Commands;
 
+use App\Models\Estimate;
 use Carbon\Carbon;
-use Crater\Models\Estimate;
 use Illuminate\Console\Command;
 
 class CheckEstimateStatus extends Command
@@ -37,7 +37,7 @@ class CheckEstimateStatus extends Command
      *
      * @return mixed
      */
-    public function handle()
+    public function handle(): void
     {
         $date = Carbon::now();
         $status = [Estimate::STATUS_ACCEPTED, Estimate::STATUS_REJECTED, Estimate::STATUS_EXPIRED];

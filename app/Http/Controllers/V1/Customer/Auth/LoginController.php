@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Auth;
+namespace App\Http\Controllers\V1\Customer\Auth;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\Customer\CustomerLoginRequest;
-use Crater\Models\Company;
-use Crater\Models\Customer;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Customer\CustomerLoginRequest;
+use App\Models\Company;
+use App\Models\Customer;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -15,7 +15,6 @@ class LoginController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Crater\Http\Requests\Customer\CustomerLoginRequest  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(CustomerLoginRequest $request, Company $company)
@@ -39,7 +38,7 @@ class LoginController extends Controller
         Auth::guard('customer')->login($user);
 
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
     }
 }

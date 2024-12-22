@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Expense;
+namespace App\Http\Controllers\V1\Customer\Expense;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\ExpenseResource;
-use Crater\Models\Company;
-use Crater\Models\Expense;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\ExpenseResource;
+use App\Models\Company;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,7 +31,7 @@ class ExpensesController extends Controller
             ]))
             ->paginateData($limit);
 
-        return (ExpenseResource::collection($expenses))
+        return ExpenseResource::collection($expenses)
             ->additional(['meta' => [
                 'expenseTotalCount' => Expense::whereCustomer(Auth::guard('customer')->id())->count(),
             ]]);
@@ -40,7 +40,7 @@ class ExpensesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Expense  $expense
+     * @param  \App\Models\Expense  $expense
      * @return \Illuminate\Http\Response
      */
     public function show(Company $company, $id)

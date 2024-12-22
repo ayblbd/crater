@@ -3,7 +3,7 @@
     <BasePageHeader :title="pageTitle">
       <BaseBreadcrumb>
         <BaseBreadcrumbItem :title="$t('general.home')" to="dashboard" />
-        <BaseBreadcrumbItem :title="$tc('items.item', 2)" to="/admin/items" />
+        <BaseBreadcrumbItem :title="$t('items.item', 2)" to="/admin/items" />
         <BaseBreadcrumbItem :title="pageTitle" to="#" active />
       </BaseBreadcrumb>
     </BasePageHeader>
@@ -217,8 +217,8 @@ const rules = computed(() => {
       name: {
         required: helpers.withMessage(t('validation.required'), required),
         minLength: helpers.withMessage(
-          t('validation.name_min_length', { count: 3 }),
-          minLength(3)
+          t('validation.name_min_length', { count: 2 }),
+          minLength(2)
         ),
       },
 

@@ -1,8 +1,9 @@
 <?php
 
-use Crater\Models\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\{getJson};
 
 beforeEach(function () {

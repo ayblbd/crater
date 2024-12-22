@@ -1,17 +1,21 @@
-<img src="https://res.cloudinary.com/bytefury/image/upload/v1574149856/Crater/craterframe.png">
+<img src="https://github.com/user-attachments/assets/a6ae2080-e865-4fde-b41d-5a09964d7de2">
 
 ## Introduction
 
-Crater is an open-source web & mobile app that helps you track expenses, payments & create professional invoices & estimates.
+InvoiceShelf is an open-source web & mobile app that helps you track expenses, payments & create professional invoices & estimates.
 
-Web Application is made using Laravel & VueJS while the Mobile Apps are built using React Native.
+InvoiceShelf is a fork of [Crater](https://crater.finance) that focuses in stability, updates and new features.
+
+The Web Application is made using Laravel & VueJS while the Mobile Apps are built using React Native.
+
+**NOTE:** The docker image files are moved into a separate repository [InvoiceShelf/docker](https://github.com/InvoiceShelf/docker).
 
 # Table of Contents
 
 1. [Documentation](#documentation)
 2. [Download](#download)
 3. [Mobile Apps](#mobile-apps)
-4. [Discord](#discord)
+4. [Discord - **NEW**](#discord) 🔥
 5. [Roadmap](#roadmap)
 6. [Credits](#credits)
 7. [Help us translate](#translate)
@@ -19,25 +23,25 @@ Web Application is made using Laravel & VueJS while the Mobile Apps are built us
 
 ## Documentation
 
-- [Installation Steps](https://docs.craterapp.com/installation.html)
-- [User Guide](https://docs.craterapp.com/)
-- [Developer Guide](https://docs.craterapp.com/developer-guide.html)
-- [API Documentation](https://api-docs.craterapp.com)
+- [Installation Steps](https://docs.invoiceshelf.com/installation.html)
+- [User Guide](https://docs.invoiceshelf.com/)
+- [Developer Guide](https://docs.invoiceshelf.com/developer-guide.html)
+- [API Documentation](https://api-docs.invoiceshelf.com)
 
 ## Download
 
-- [Download Link](https://craterapp.com/downloads)
+- [Download Link](https://invoiceshelf.com)
 
 ## Mobile Apps
 
-- [Android](https://play.google.com/store/apps/details?id=com.craterapp.app)
-- [IOS](https://apps.apple.com/app/id1489169767)
-- [Source](https://github.com/bytefury/crater-mobile)
+- Andorid - Coming Soon
+- IOS - Coming Soon
+- [Source](https://github.com/InvoiceShelf/mobile)
 
 ## Discord
 
-Join the Crater discord server to discuss:
-[Invite Link](https://discord.gg/nyTstm6)
+Join the InvoiceShelf discord server to discuss:
+[Invite Link](https://discord.gg/eHXf4zWhsR)
 
 ## Roadmap
 
@@ -55,26 +59,19 @@ Join the Crater discord server to discuss:
 - [x] Multiple Companies
 - [x] Recurring Invoices
 - [x] Customer Portal
-- [x] Accept Payments (Stripe Integration)
-- [x] White Labeling (Easy Invoice, Email & Consumer Portal Theme customisation)
-- [ ] Modules API
-- [ ] Blockchain Integration
-- [ ] Web 3.0 Accounting
-- [ ] Vendors & Bills
-- [ ] Inventory Management 
-- [ ] Payment Reminders
-- [ ] Improve Accessibility
-- [ ] Debit & Credit Notes
-- [ ] Time Tracking
-- [ ] Full service Payroll
+- [ ] Accept Payments (Stripe Integration)
+- [ ] Improved template system (invoices and estimate)
+- [ ] Modules and templates marketplace
 
 
 ## Copyright
 
-© 2022 Crater Invoice, Inc.
+- © 2024 IDEOLOGIX MEDIA DOOEL.
+- © 2022 Crater Invoice, Inc
 
 **Special thanks to:**
 
+- [Crater](https://crater.finance/)
 - [Birkhoff Lee](https://github.com/BirkhoffLee)
 - [Akaunting](https://github.com/akaunting/akaunting)
 - [MakerLab](https://github.com/MakerLab-Dev)
@@ -83,7 +80,7 @@ Join the Crater discord server to discuss:
 
 ## Translate
 
-Help us translate on https://crowdin.com/project/crater-invoice
+Help us translate on https://crowdin.com/project/invoiceshelf
 
 **Thanks to Translation Contributors:**
 
@@ -97,5 +94,5 @@ Help us translate on https://crowdin.com/project/crater-invoice
 
 ## License
 
-Crater is released under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3.
+InvoiceShelf is released under the GNU AFFERO GENERAL PUBLIC LICENSE Version 3.
 See [LICENSE](LICENSE) for details.

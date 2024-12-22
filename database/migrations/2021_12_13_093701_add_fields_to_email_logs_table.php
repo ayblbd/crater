@@ -1,20 +1,18 @@
 <?php
 
-use Crater\Models\Company;
-use Crater\Models\CompanySetting;
-use Crater\Models\User;
+use App\Models\Company;
+use App\Models\CompanySetting;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddFieldsToEmailLogsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('email_logs', function (Blueprint $table) {
             $table->string('token')->unique()->nullable();
@@ -25,7 +23,7 @@ class AddFieldsToEmailLogsTable extends Migration
         if ($user) {
             $settings = [
                 'automatically_expire_public_links' => 'Yes',
-                'link_expiry_days' => 7
+                'link_expiry_days' => 7,
             ];
 
             $companies = Company::all();
@@ -38,13 +36,11 @@ class AddFieldsToEmailLogsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('email_logs', function (Blueprint $table) {
             $table->dropColumn('token');
         });
     }
-}
+};

@@ -1,10 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Installation;
+namespace App\Http\Controllers\V1\Installation;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\DatabaseEnvironmentRequest;
-use Crater\Space\EnvironmentManager;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\DatabaseEnvironmentRequest;
+use App\Space\EnvironmentManager;
+use App\Space\InstallUtils;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -15,18 +16,11 @@ class DatabaseConfigurationController extends Controller
      */
     protected $EnvironmentManager;
 
-    /**
-     * @param EnvironmentManager $environmentManager
-     */
     public function __construct(EnvironmentManager $environmentManager)
     {
         $this->environmentManager = $environmentManager;
     }
 
-    /**
-     *
-     * @param DatabaseEnvironmentRequest $request
-     */
     public function saveDatabaseEnvironment(DatabaseEnvironmentRequest $request)
     {
         Artisan::call('config:clear');
@@ -34,13 +28,15 @@ class DatabaseConfigurationController extends Controller
 
         $results = $this->environmentManager->saveDatabaseVariables($request);
 
-        if (array_key_exists("success", $results)) {
+        if (array_key_exists('success', $results)) {
             Artisan::call('key:generate --force');
             Artisan::call('optimize:clear');
             Artisan::call('config:clear');
             Artisan::call('cache:clear');
             Artisan::call('storage:link');
             Artisan::call('migrate --seed --force');
+            // Set version.
+            InstallUtils::setCurrentVersion();
         }
 
         return response()->json($results);
@@ -78,7 +74,6 @@ class DatabaseConfigurationController extends Controller
                 break;
 
         }
-
 
         return response()->json([
             'config' => $databaseData,

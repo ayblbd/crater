@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Policies;
+namespace App\Policies;
 
-use Crater\Models\Customer;
-use Crater\Models\User;
+use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Silber\Bouncer\BouncerFacade;
 
@@ -14,10 +14,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can view any models.
      *
-     * @param  \Crater\Models\User  $user
      * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
         if (BouncerFacade::can('view-customer', Customer::class)) {
             return true;
@@ -29,11 +28,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can view the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Customer  $customer
      * @return mixed
      */
-    public function view(User $user, Customer $customer)
+    public function view(User $user, Customer $customer): bool
     {
         if (BouncerFacade::can('view-customer', $customer)) {
             return true;
@@ -45,10 +42,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can create models.
      *
-     * @param  \Crater\Models\User  $user
      * @return mixed
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
         if (BouncerFacade::can('create-customer', Customer::class)) {
             return true;
@@ -60,11 +56,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can update the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Customer  $customer
      * @return mixed
      */
-    public function update(User $user, Customer $customer)
+    public function update(User $user, Customer $customer): bool
     {
         if (BouncerFacade::can('edit-customer', $customer)) {
             return true;
@@ -76,11 +70,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can delete the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Customer  $customer
      * @return mixed
      */
-    public function delete(User $user, Customer $customer)
+    public function delete(User $user, Customer $customer): bool
     {
         if (BouncerFacade::can('delete-customer', $customer)) {
             return true;
@@ -92,11 +84,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can restore the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Customer  $customer
      * @return mixed
      */
-    public function restore(User $user, Customer $customer)
+    public function restore(User $user, Customer $customer): bool
     {
         if (BouncerFacade::can('delete-customer', $customer)) {
             return true;
@@ -108,11 +98,9 @@ class CustomerPolicy
     /**
      * Determine whether the user can permanently delete the model.
      *
-     * @param  \Crater\Models\User  $user
-     * @param  \Crater\Models\Customer  $customer
      * @return mixed
      */
-    public function forceDelete(User $user, Customer $customer)
+    public function forceDelete(User $user, Customer $customer): bool
     {
         if (BouncerFacade::can('delete-customer', $customer)) {
             return true;
@@ -124,7 +112,6 @@ class CustomerPolicy
     /**
      * Determine whether the user can delete models.
      *
-     * @param  \Crater\Models\User  $user
      * @return mixed
      */
     public function deleteMultiple(User $user)

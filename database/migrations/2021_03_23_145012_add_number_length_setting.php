@@ -1,17 +1,15 @@
 <?php
 
-use Crater\Models\CompanySetting;
-use Crater\Models\User;
+use App\Models\CompanySetting;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNumberLengthSetting extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $user = User::where('role', 'super admin')->first();
 
@@ -35,11 +33,9 @@ class AddNumberLengthSetting extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

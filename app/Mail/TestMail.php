@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Mail;
+namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -17,9 +17,6 @@ class TestMail extends Mailable
 
     /**
      * Create a new message instance.
-     *
-     * @param $subject
-     * @param $message
      */
     public function __construct($subject, $message)
     {

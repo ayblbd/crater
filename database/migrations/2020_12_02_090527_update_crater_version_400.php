@@ -1,25 +1,23 @@
 <?php
 
-use Crater\Models\Address;
-use Crater\Models\CompanySetting;
-use Crater\Models\Estimate;
-use Crater\Models\Expense;
-use Crater\Models\FileDisk;
-use Crater\Models\Invoice;
-use Crater\Models\Item;
-use Crater\Models\Payment;
-use Crater\Models\Setting;
-use Crater\Models\User;
+use App\Models\Address;
+use App\Models\CompanySetting;
+use App\Models\Estimate;
+use App\Models\Expense;
+use App\Models\FileDisk;
+use App\Models\Invoice;
+use App\Models\Item;
+use App\Models\Payment;
+use App\Models\Setting;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateCraterVersion400 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         // seed the file disk
         $this->fileDiskSeed();
@@ -38,7 +36,7 @@ class UpdateCraterVersion400 extends Migration
 
             Address::where('user_id', $user->id)->update([
                 'company_id' => $user->company_id,
-                'user_id' => null
+                'user_id' => null,
             ]);
 
             // Update company settings
@@ -51,10 +49,8 @@ class UpdateCraterVersion400 extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
@@ -130,4 +126,4 @@ class UpdateCraterVersion400 extends Migration
 
         CompanySetting::setSettings($settings, $user->company_id);
     }
-}
+};

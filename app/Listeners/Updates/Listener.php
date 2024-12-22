@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Listeners\Updates;
+namespace App\Listeners\Updates;
 
 // Implementation taken from Akaunting - https://github.com/akaunting/akaunting
 class Listener
@@ -10,7 +10,6 @@ class Listener
     /**
      * Check if should listen.
      *
-     * @param  $event
      * @return bool
      */
     protected function isListenerFired($event)

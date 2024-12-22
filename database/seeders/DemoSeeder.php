@@ -2,19 +2,18 @@
 
 namespace Database\Seeders;
 
-use Crater\Models\Address;
-use Crater\Models\Setting;
-use Crater\Models\User;
+use App\Models\Address;
+use App\Models\Setting;
+use App\Models\User;
+use App\Space\InstallUtils;
 use Illuminate\Database\Seeder;
 
 class DemoSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $user = User::whereIs('super admin')->first();
 
@@ -24,6 +23,6 @@ class DemoSeeder extends Seeder
 
         Setting::setSetting('profile_complete', 'COMPLETED');
 
-        \Storage::disk('local')->put('database_created', 'database_created');
+        InstallUtils::createDbMarker();
     }
 }

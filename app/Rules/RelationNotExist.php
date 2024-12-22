@@ -1,10 +1,11 @@
 <?php
 
-namespace Crater\Rules;
+namespace App\Rules;
 
-use Illuminate\Contracts\Validation\Rule;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
 
-class RelationNotExist implements Rule
+class RelationNotExist implements ValidationRule
 {
     public $class;
 
@@ -12,41 +13,25 @@ class RelationNotExist implements Rule
 
     /**
      * Create a new rule instance.
-     * @param  string  $class
-     * @param  string  $relation
+     *
      * @return void
      */
-    public function __construct(string $class = null, string $relation = null)
+    public function __construct(?string $class = null, ?string $relation = null)
     {
         $this->class = $class;
         $this->relation = $relation;
     }
 
     /**
-     * Determine if the validation rule passes.
-     *
-     * @param  string  $attribute
-     * @param  mixed  $value
-     * @return bool
+     * Run the validation rule.
      */
-    public function passes($attribute, $value)
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         $relation = $this->relation;
 
         if ($this->class::find($value)->$relation()->exists()) {
-            return false;
+            $fail("Relation {$this->relation} exists.");
         }
 
-        return true;
-    }
-
-    /**
-     * Get the validation error message.
-     *
-     * @return string
-     */
-    public function message()
-    {
-        return "Relation {$this->relation} exists.";
     }
 }

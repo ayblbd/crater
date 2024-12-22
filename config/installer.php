@@ -13,7 +13,7 @@ return [
     |
     */
     'core' => [
-        'minPhpVersion' => '7.4.0',
+        'minPhpVersion' => '8.2.0',
     ],
     'final' => [
         'key' => true,
@@ -21,13 +21,17 @@ return [
     ],
     'requirements' => [
         'php' => [
-            'openssl',
+            'exif',
             'pdo',
+            'bcmath',
+            'openssl',
             'mbstring',
-            'tokenizer',
-            'JSON',
-            'cURL',
+            'json',
+            'xml',
+            'fileinfo',
             'zip',
+            'curl',
+            'sqlite3',
         ],
         'apache' => [
             'mod_rewrite',

@@ -1,9 +1,11 @@
 <?php
 
-namespace Crater\Http\Middleware;
+namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\Request;
 use Silber\Bouncer\Bouncer;
+use Symfony\Component\HttpFoundation\Response;
 
 class ScopeBouncer
 {
@@ -16,8 +18,6 @@ class ScopeBouncer
 
     /**
      * Constructor.
-     *
-     * @param \Silber\Bouncer\Bouncer  $bouncer
      */
     public function __construct(Bouncer $bouncer)
     {
@@ -27,11 +27,9 @@ class ScopeBouncer
     /**
      * Set the proper Bouncer scope for the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
         $tenantId = $request->header('company')

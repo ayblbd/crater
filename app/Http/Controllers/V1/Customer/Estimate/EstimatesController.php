@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Estimate;
+namespace App\Http\Controllers\V1\Customer\Estimate;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\EstimateResource;
-use Crater\Models\Company;
-use Crater\Models\Estimate;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\EstimateResource;
+use App\Models\Company;
+use App\Models\Estimate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -21,11 +21,11 @@ class EstimatesController extends Controller
         $limit = $request->has('limit') ? $request->limit : 10;
 
         $estimates = Estimate::with([
-                'items',
-                'customer',
-                'taxes',
-                'creator',
-            ])
+            'items',
+            'customer',
+            'taxes',
+            'creator',
+        ])
             ->where('status', '<>', 'DRAFT')
             ->whereCustomer(Auth::guard('customer')->id())
             ->applyFilters($request->only([
@@ -39,7 +39,7 @@ class EstimatesController extends Controller
             ->latest()
             ->paginateData($limit);
 
-        return (EstimateResource::collection($estimates))
+        return EstimateResource::collection($estimates)
             ->additional(['meta' => [
                 'estimateTotalCount' => Estimate::where('status', '<>', 'DRAFT')->whereCustomer(Auth::guard('customer')->id())->count(),
             ]]);
@@ -48,7 +48,7 @@ class EstimatesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  Estimate $estimate
+     * @param  Estimate  $estimate
      * @return \Illuminate\Http\Response
      */
     public function show(Company $company, $id)

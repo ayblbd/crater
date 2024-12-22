@@ -1,27 +1,23 @@
 <?php
 
-use Crater\Models\Setting;
+use App\Models\Setting;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateCraterVersion604 extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Setting::setSetting('version', '6.0.4');
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

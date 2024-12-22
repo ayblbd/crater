@@ -1,12 +1,16 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
+use App\Http\Requests\UserRequest;
+use App\Notifications\MailResetPasswordNotification;
+use App\Traits\HasCustomFieldsTrait;
 use Carbon\Carbon;
-use Crater\Http\Requests\UserRequest;
-use Crater\Notifications\MailResetPasswordNotification;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Schema;
@@ -19,11 +23,11 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens;
-    use Notifiable;
-    use InteractsWithMedia;
     use HasCustomFieldsTrait;
     use HasFactory;
     use HasRolesAndAbilities;
+    use InteractsWithMedia;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +35,7 @@ class User extends Authenticatable implements HasMedia
      * @var array
      */
     protected $guarded = [
-        'id'
+        'id',
     ];
 
     /**
@@ -82,82 +86,85 @@ class User extends Authenticatable implements HasMedia
         $email = $request->email;
         $password = $request->password;
 
-        return (\Auth::attempt(['email' => $email, 'password' => $password], $remember));
+        return \Auth::attempt(['email' => $email, 'password' => $password], $remember);
     }
 
     public function getFormattedCreatedAtAttribute($value)
     {
-        $dateFormat = CompanySetting::getSetting('carbon_date_format', request()->header('company'));
+        $company_id = (CompanySetting::where('company_id', request()->header('company'))->exists())
+            ? request()->header('company')
+            : $this->companies()->first()->id;
+        $dateFormat = CompanySetting::getSetting('carbon_date_format', $company_id);
 
         return Carbon::parse($this->created_at)->format($dateFormat);
     }
 
-    public function estimates()
+    public function estimates(): HasMany
     {
         return $this->hasMany(Estimate::class, 'creator_id');
     }
 
-    public function customers()
+    public function customers(): HasMany
     {
         return $this->hasMany(Customer::class, 'creator_id');
     }
 
-    public function recurringInvoices()
+    public function recurringInvoices(): HasMany
     {
         return $this->hasMany(RecurringInvoice::class, 'creator_id');
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo('Crater\Models\User', 'creator_id');
+        return $this->belongsTo(\App\Models\User::class, 'creator_id');
     }
 
-    public function companies()
+    public function companies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'user_company', 'user_id', 'company_id');
     }
 
-    public function expenses()
+    public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class, 'creator_id');
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class, 'creator_id');
     }
 
-    public function invoices()
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class, 'creator_id');
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(Item::class, 'creator_id');
     }
 
-    public function settings()
+    public function settings(): HasMany
     {
         return $this->hasMany(UserSetting::class, 'user_id');
     }
 
-    public function addresses()
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
-    public function billingAddress()
+    public function billingAddress(): HasOne
     {
         return $this->hasOne(Address::class)->where('type', Address::BILLING_TYPE);
     }
 
-    public function shippingAddress()
+    public function shippingAddress(): HasOne
     {
         return $this->hasOne(Address::class)->where('type', Address::SHIPPING_TYPE);
     }
@@ -273,7 +280,7 @@ class User extends Authenticatable implements HasMedia
         $avatar = $this->getMedia('admin_avatar')->first();
 
         if ($avatar) {
-            return  asset($avatar->getUrl());
+            return asset($avatar->getUrl());
         }
 
         return 0;

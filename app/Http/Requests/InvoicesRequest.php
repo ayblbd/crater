@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\Invoice;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\Invoice;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,20 +12,16 @@ class InvoicesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.s
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'invoice_date' => [
@@ -39,28 +35,33 @@ class InvoicesRequest extends FormRequest
             ],
             'invoice_number' => [
                 'required',
-                Rule::unique('invoices')->where('company_id', $this->header('company'))
+                Rule::unique('invoices')->where('company_id', $this->header('company')),
             ],
             'exchange_rate' => [
-                'nullable'
+                'nullable',
             ],
             'discount' => [
+                'numeric',
                 'required',
             ],
             'discount_val' => [
+                'integer',
                 'required',
             ],
             'sub_total' => [
+                'numeric',
                 'required',
             ],
             'total' => [
+                'numeric',
+                'max:999999999999',
                 'required',
             ],
             'tax' => [
                 'required',
             ],
             'template_name' => [
-                'required'
+                'required',
             ],
             'items' => [
                 'required',
@@ -77,9 +78,11 @@ class InvoicesRequest extends FormRequest
                 'required',
             ],
             'items.*.quantity' => [
+                'numeric',
                 'required',
             ],
             'items.*.price' => [
+                'numeric',
                 'required',
             ],
         ];
@@ -89,11 +92,11 @@ class InvoicesRequest extends FormRequest
         $customer = Customer::find($this->customer_id);
 
         if ($customer && $companyCurrency) {
-            if ((string)$customer->currency_id !== $companyCurrency) {
+            if ((string) $customer->currency_id !== $companyCurrency) {
                 $rules['exchange_rate'] = [
                     'required',
                 ];
-            };
+            }
         }
 
         if ($this->isMethod('PUT')) {

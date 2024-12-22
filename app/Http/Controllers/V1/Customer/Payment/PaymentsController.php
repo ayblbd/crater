@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Payment;
+namespace App\Http\Controllers\V1\Customer\Payment;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\PaymentResource;
-use Crater\Models\Company;
-use Crater\Models\Payment;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\PaymentResource;
+use App\Models\Company;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -33,7 +33,7 @@ class PaymentsController extends Controller
             ->latest()
             ->paginateData($limit);
 
-        return (PaymentResource::collection($payments))
+        return PaymentResource::collection($payments)
             ->additional(['meta' => [
                 'paymentTotalCount' => Payment::whereCustomer(Auth::guard('customer')->id())->count(),
             ]]);
@@ -42,7 +42,7 @@ class PaymentsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Payment  $payment
+     * @param  \App\Models\Payment  $payment
      * @return \Illuminate\Http\Response
      */
     public function show(Company $company, $id)

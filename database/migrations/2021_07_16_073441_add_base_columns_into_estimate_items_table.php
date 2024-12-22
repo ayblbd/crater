@@ -4,14 +4,12 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddBaseColumnsIntoEstimateItemsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         Schema::table('estimate_items', function (Blueprint $table) {
             $table->decimal('exchange_rate', 19, 6)->nullable();
@@ -24,10 +22,8 @@ class AddBaseColumnsIntoEstimateItemsTable extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::table('estimate_items', function (Blueprint $table) {
             $table->dropColumn([
@@ -35,8 +31,8 @@ class AddBaseColumnsIntoEstimateItemsTable extends Migration
                 'base_discount_val',
                 'base_price',
                 'base_tax',
-                'base_total'
+                'base_total',
             ]);
         });
     }
-}
+};

@@ -1,86 +1,87 @@
 <?php
 
-use Crater\Models\CompanySetting;
-use Crater\Models\Currency;
-use Crater\Models\CustomField;
-use Crater\Models\Setting;
+use App\Models\CompanySetting;
+use App\Models\Currency;
+use App\Models\CustomField;
+use App\Models\Setting;
+use App\Space\InstallUtils;
 use Illuminate\Support\Str;
 
 /**
  * Get company setting
  *
- * @param $company_id
  * @return string
  */
 function get_company_setting($key, $company_id)
 {
-    if (\Storage::disk('local')->has('database_created')) {
-        return CompanySetting::getSetting($key, $company_id);
+    if (! InstallUtils::isDbCreated()) {
+        return null;
     }
+
+    return CompanySetting::getSetting($key, $company_id);
 }
 
 /**
  * Get app setting
  *
- * @param $company_id
+ * @param  $company_id
  * @return string
  */
 function get_app_setting($key)
 {
-    if (\Storage::disk('local')->has('database_created')) {
-        return Setting::getSetting($key);
+    if (! InstallUtils::isDbCreated()) {
+        return null;
     }
+
+    return Setting::getSetting($key);
 }
 
 /**
  * Get page title
  *
- * @param $company_id
  * @return string
  */
 function get_page_title($company_id)
 {
+    if (! InstallUtils::isDbCreated()) {
+        return null;
+    }
+
     $routeName = Route::currentRouteName();
 
-    $pageTitle = null;
-    $defaultPageTitle = 'Crater - Self Hosted Invoicing Platform';
+    $defaultPageTitle = 'InvoiceShelf - Self Hosted Invoicing Platform';
 
-    if (\Storage::disk('local')->has('database_created')) {
-        if ($routeName === 'customer.dashboard') {
-            $pageTitle = CompanySetting::getSetting('customer_portal_page_title', $company_id);
-
-            return $pageTitle ? $pageTitle : $defaultPageTitle;
-        }
-
-        $pageTitle = Setting::getSetting('admin_page_title');
+    if ($routeName === 'customer.dashboard') {
+        $pageTitle = CompanySetting::getSetting('customer_portal_page_title', $company_id);
 
         return $pageTitle ? $pageTitle : $defaultPageTitle;
     }
+
+    $pageTitle = Setting::getSetting('admin_page_title');
+
+    return $pageTitle ? $pageTitle : $defaultPageTitle;
 }
 
 /**
  * Set Active Path
  *
- * @param $path
- * @param string $active
+ * @param  string  $active
  * @return string
  */
 function set_active($path, $active = 'active')
 {
-    return call_user_func_array('Request::is', (array)$path) ? $active : '';
+    return call_user_func_array('Request::is', (array) $path) ? $active : '';
 }
 
 /**
- * @param $path
  * @return mixed
  */
 function is_url($path)
 {
-    return call_user_func_array('Request::is', (array)$path);
+    return call_user_func_array('Request::is', (array) $path);
 }
 
 /**
- * @param string $type
  * @return string
  */
 function getCustomFieldValueKey(string $type)
@@ -122,7 +123,6 @@ function getCustomFieldValueKey(string $type)
 }
 
 /**
- * @param $money
  * @return formated_money
  */
 function format_money_pdf($money, $currency = null)
@@ -151,7 +151,7 @@ function format_money_pdf($money, $currency = null)
 }
 
 /**
- * @param $string
+ * @param  $string
  * @return string
  */
 function clean_slug($model, $title, $id = 0)
@@ -191,6 +191,6 @@ function respondJson($error, $message)
 {
     return response()->json([
         'error' => $error,
-        'message' => $message
+        'message' => $message,
     ], 422);
 }

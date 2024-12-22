@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Crater\Models\ExpenseCategory;
-use Crater\Models\User;
+use App\Models\ExpenseCategory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ExpenseCategoryFactory extends Factory
@@ -17,15 +17,13 @@ class ExpenseCategoryFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->word(),
             'company_id' => User::find(1)->companies()->first()->id,
-            'description' => $this->faker->text,
+            'description' => $this->faker->text(),
         ];
     }
 }

@@ -1,23 +1,22 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Report;
+namespace App\Http\Controllers\V1\Admin\Report;
 
-use PDF;
+use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\CompanySetting;
+use App\Models\Currency;
+use App\Models\Expense;
 use Carbon\Carbon;
-use Crater\Models\Company;
-use Crater\Models\Expense;
-use Crater\Models\Currency;
 use Illuminate\Http\Request;
-use Crater\Models\CompanySetting;
 use Illuminate\Support\Facades\App;
-use Crater\Http\Controllers\Controller;
+use PDF;
 
 class ExpensesReportController extends Controller
 {
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $hash
      * @return \Illuminate\Http\JsonResponse
      */
@@ -27,7 +26,7 @@ class ExpensesReportController extends Controller
 
         $this->authorize('view report', $company);
 
-        $locale = CompanySetting::getSetting('language',  $company->id);
+        $locale = CompanySetting::getSetting('language', $company->id);
 
         App::setLocale($locale);
 
@@ -42,8 +41,8 @@ class ExpensesReportController extends Controller
         }
 
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $company->id);
-        $from_date = Carbon::createFromFormat('Y-m-d', $request->from_date)->format($dateFormat);
-        $to_date = Carbon::createFromFormat('Y-m-d', $request->to_date)->format($dateFormat);
+        $from_date = Carbon::createFromFormat('Y-m-d', $request->from_date)->translatedFormat($dateFormat);
+        $to_date = Carbon::createFromFormat('Y-m-d', $request->to_date)->translatedFormat($dateFormat);
         $currency = Currency::findOrFail(CompanySetting::getSetting('currency', $company->id));
 
         $colors = [

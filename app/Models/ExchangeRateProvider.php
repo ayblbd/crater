@@ -1,10 +1,11 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
-use Crater\Http\Requests\ExchangeRateProviderRequest;
+use App\Http\Requests\ExchangeRateProviderRequest;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Http;
 
 class ExchangeRateProvider extends Model
@@ -15,13 +16,16 @@ class ExchangeRateProvider extends Model
         'id',
     ];
 
-    protected $casts = [
-        'currencies' => 'array',
-        'driver_config' => 'array',
-        'active' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'currencies' => 'array',
+            'driver_config' => 'array',
+            'active' => 'boolean',
+        ];
+    }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
@@ -78,28 +82,28 @@ class ExchangeRateProvider extends Model
     {
         switch ($request['driver']) {
             case 'currency_freak':
-                $url = "https://api.currencyfreaks.com/latest?apikey=".$request['key']."&symbols=INR&base=USD";
+                $url = 'https://api.currencyfreaks.com/latest?apikey='.$request['key'].'&symbols=INR&base=USD';
                 $response = Http::get($url)->json();
 
                 if (array_key_exists('success', $response)) {
-                    if ($response["success"] == false) {
-                        return respondJson($response["error"]["message"], $response["error"]["message"]);
+                    if ($response['success'] == false) {
+                        return respondJson($response['error']['message'], $response['error']['message']);
                     }
                 }
 
                 return response()->json([
-                    'exchangeRate' => array_values($response["rates"]),
+                    'exchangeRate' => array_values($response['rates']),
                 ], 200);
 
                 break;
 
             case 'currency_layer':
-                $url = "http://api.currencylayer.com/live?access_key=".$request['key']."&source=INR&currencies=USD";
+                $url = 'http://api.currencylayer.com/live?access_key='.$request['key'].'&source=INR&currencies=USD';
                 $response = Http::get($url)->json();
 
                 if (array_key_exists('success', $response)) {
-                    if ($response["success"] == false) {
-                        return respondJson($response["error"]["info"], $response["error"]["info"]);
+                    if ($response['success'] == false) {
+                        return respondJson($response['error']['info'], $response['error']['info']);
                     }
                 }
 
@@ -110,25 +114,25 @@ class ExchangeRateProvider extends Model
                 break;
 
             case 'open_exchange_rate':
-                $url = "https://openexchangerates.org/api/latest.json?app_id=".$request['key']."&base=INR&symbols=USD";
+                $url = 'https://openexchangerates.org/api/latest.json?app_id='.$request['key'].'&base=INR&symbols=USD';
                 $response = Http::get($url)->json();
 
-                if (array_key_exists("error", $response)) {
-                    return respondJson($response['message'], $response["description"]);
+                if (array_key_exists('error', $response)) {
+                    return respondJson($response['message'], $response['description']);
                 }
 
                 return response()->json([
-                    'exchangeRate' => array_values($response["rates"]),
+                    'exchangeRate' => array_values($response['rates']),
                 ], 200);
 
                 break;
 
             case 'currency_converter':
                 $url = self::getCurrencyConverterUrl($request['driver_config']);
-                $url = $url."/api/v7/convert?apiKey=".$request['key'];
+                $url = $url.'/api/v7/convert?apiKey='.$request['key'];
 
-                $query = "INR_USD";
-                $url = $url."&q={$query}"."&compact=y";
+                $query = 'INR_USD';
+                $url = $url."&q={$query}".'&compact=y';
                 $response = Http::get($url)->json();
 
                 return response()->json([
@@ -143,17 +147,17 @@ class ExchangeRateProvider extends Model
     {
         switch ($data['type']) {
             case 'PREMIUM':
-                return "https://api.currconv.com";
+                return 'https://api.currconv.com';
 
                 break;
 
             case 'PREPAID':
-                return "https://prepaid.currconv.com";
+                return 'https://prepaid.currconv.com';
 
                 break;
 
             case 'FREE':
-                return "https://free.currconv.com";
+                return 'https://free.currconv.com';
 
                 break;
 

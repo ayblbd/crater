@@ -2,10 +2,10 @@
 
 // Implementation taken from nova-backup-tool - https://github.com/spatie/nova-backup-tool/
 
-namespace Crater\Http\Controllers\V1\Admin\Backup;
+namespace App\Http\Controllers\V1\Admin\Backup;
 
-use Crater\Jobs\CreateBackupJob;
-use Crater\Rules\Backup\PathToZip;
+use App\Jobs\CreateBackupJob;
+use App\Rules\Backup\PathToZip;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -36,7 +36,7 @@ class BackupsController extends ApiController
                         return [
                             'path' => $backup->path(),
                             'created_at' => $backup->date()->format('Y-m-d H:i:s'),
-                            'size' => Format::humanReadableSize($backup->size()),
+                            'size' => Format::humanReadableSize($backup->sizeInBytes()),
                         ];
                     })
                     ->toArray();
@@ -59,7 +59,6 @@ class BackupsController extends ApiController
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return JsonResponse
      */
     public function store(Request $request)
@@ -74,7 +73,6 @@ class BackupsController extends ApiController
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return JsonResponse
      */
     public function destroy($disk, Request $request)

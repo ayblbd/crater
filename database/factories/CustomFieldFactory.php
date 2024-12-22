@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Crater\Models\CustomField;
-use Crater\Models\User;
+use App\Models\CustomField;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomFieldFactory extends Factory
@@ -17,21 +17,19 @@ class CustomFieldFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name' => $this->faker->name,
-            'label' => $this->faker->name,
-            'order' => $this->faker->randomDigitNotNull,
+            'name' => $this->faker->name(),
+            'label' => $this->faker->name(),
+            'order' => $this->faker->randomDigitNotNull(),
             'is_required' => $this->faker->randomElement([true, false]),
             'model_type' => $this->faker->randomElement(['Customer', 'Invoice', 'Estimate', 'Expense', 'Payment']),
             'slug' => function (array $item) {
                 return clean_slug($item['model_type'], $item['label']);
             },
-            'type' => $this->faker->randomElement(['Text', 'Textarea', 'Phone', 'URL', 'Number','Dropdown' , 'Switch', 'Date', 'DateTime', 'Time']),
+            'type' => $this->faker->randomElement(['Text', 'Textarea', 'Phone', 'URL', 'Number', 'Dropdown', 'Switch', 'Date', 'DateTime', 'Time']),
             'company_id' => User::find(1)->companies()->first()->id,
         ];
     }

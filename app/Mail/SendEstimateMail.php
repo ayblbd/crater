@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Mail;
+namespace App\Mail;
 
-use Crater\Models\EmailLog;
-use Crater\Models\Estimate;
+use App\Models\EmailLog;
+use App\Models\Estimate;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -48,8 +48,8 @@ class SendEstimateMail extends Mailable
         $this->data['url'] = route('estimate', ['email_log' => $log->token]);
 
         $mailContent = $this->from($this->data['from'], config('mail.from.name'))
-                    ->subject($this->data['subject'])
-                    ->markdown('emails.send.estimate', ['data', $this->data]);
+            ->subject($this->data['subject'])
+            ->markdown('emails.send.estimate', ['data', $this->data]);
 
         if ($this->data['attach']['data']) {
             $mailContent->attachData(

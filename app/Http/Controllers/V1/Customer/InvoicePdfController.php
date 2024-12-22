@@ -1,14 +1,14 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer;
+namespace App\Http\Controllers\V1\Customer;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\InvoiceResource as CustomerInvoiceResource;
-use Crater\Mail\InvoiceViewedMail;
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\EmailLog;
-use Crater\Models\Invoice;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\InvoiceResource as CustomerInvoiceResource;
+use App\Mail\InvoiceViewedMail;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\EmailLog;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class InvoicePdfController extends Controller
@@ -45,7 +45,7 @@ class InvoicePdfController extends Controller
 
             return view('app')->with([
                 'customer_logo' => get_company_setting('customer_portal_logo', $invoice->company_id),
-                'current_theme' => get_company_setting('customer_portal_theme', $invoice->company_id)
+                'current_theme' => get_company_setting('customer_portal_theme', $invoice->company_id),
             ]);
         }
 

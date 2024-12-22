@@ -1,14 +1,15 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Settings\CompanyController;
-use Crater\Http\Requests\CompanyRequest;
-use Crater\Http\Requests\ProfileRequest;
-use Crater\Models\Invoice;
-use Crater\Models\InvoiceItem;
-use Crater\Models\Tax;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Settings\CompanyController;
+use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\ProfileRequest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Tax;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
@@ -32,7 +33,6 @@ test('get profile', function () {
         ->assertOk();
 });
 
-
 test('update profile using a form request', function () {
     $this->assertActionUsesFormRequest(
         CompanyController::class,
@@ -45,7 +45,7 @@ test('update profile', function () {
     $user = [
         'name' => 'John Doe',
         'password' => 'admin@123',
-        'email' => 'admin@crater.in',
+        'email' => 'admin@invoiceshelf.com',
     ];
 
     $response = putJson('api/v1/me', $user);
@@ -77,8 +77,8 @@ test('update company', function () {
         'phone' => '1234567890',
         'zip' => '112233',
         'address' => [
-            'country_id' => 2
-        ]
+            'country_id' => 2,
+        ],
     ];
 
     putJson('api/v1/company', $company)
@@ -101,7 +101,7 @@ test('update settings', function () {
         'fiscal_year' => '1-12',
         'carbon_date_format' => 'Y/m/d',
         'moment_date_format' => 'YYYY/MM/DD',
-        'notification_email' => 'noreply@crater.in',
+        'notification_email' => 'noreply@invoiceshelf.com',
         'notify_invoice_viewed' => 'YES',
         'notify_estimate_viewed' => 'YES',
         'tax_per_item' => 'YES',
@@ -125,7 +125,7 @@ test('update settings', function () {
 
 test('update settings without currency setting', function () {
     $settings = [
-        'notification_email' => 'noreply@crater.in',
+        'notification_email' => 'noreply@invoiceshelf.com',
     ];
 
     $response = postJson('/api/v1/company/settings', ['settings' => $settings]);
@@ -170,9 +170,8 @@ test('update currency settings after company has currency and transactions is no
     $response->assertOK()
         ->assertJson([
             'success' => false,
-            'message' => 'Cannot update company currency after transactions are created.'
+            'message' => 'Cannot update company currency after transactions are created.',
         ]);
-
 
     $this->assertDatabaseHas('company_settings', [
         'option' => 'currency',

@@ -1,13 +1,13 @@
 <?php
 
-namespace Crater\Space;
+namespace App\Space;
 
+use App\Events\ModuleEnabledEvent;
+use App\Events\ModuleInstalledEvent;
+use App\Http\Resources\ModuleResource;
+use App\Models\Module as ModelsModule;
+use App\Models\Setting;
 use Artisan;
-use Crater\Events\ModuleEnabledEvent;
-use Crater\Events\ModuleInstalledEvent;
-use Crater\Http\Resources\ModuleResource;
-use Crater\Models\Module as ModelsModule;
-use Crater\Models\Setting;
 use File;
 use GuzzleHttp\Exception\RequestException;
 use Nwidart\Modules\Facades\Module;
@@ -56,7 +56,7 @@ class ModuleInstaller
         $response = static::getRemote($url, ['timeout' => 100, 'track_redirects' => true], $token);
 
         if ($response && ($response->getStatusCode() == 401)) {
-            return (object)['success' => false, 'error' => 'invalid_token'];
+            return (object) ['success' => false, 'error' => 'invalid_token'];
         }
 
         if ($response && ($response->getStatusCode() == 200)) {
@@ -137,7 +137,7 @@ class ModuleInstaller
 
         return [
             'success' => true,
-            'path' => $zip_file_path
+            'path' => $zip_file_path,
         ];
     }
 
@@ -215,7 +215,7 @@ class ModuleInstaller
         return true;
     }
 
-    public static function checkToken(String $token)
+    public static function checkToken(string $token)
     {
         $url = 'api/marketplace/ping';
         $response = static::getRemote($url, ['timeout' => 100, 'track_redirects' => true], $token);

@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Invoice;
+namespace App\Http\Controllers\V1\Admin\Invoice;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Invoice;
+use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class InvoiceTemplatesController extends Controller
@@ -11,7 +11,6 @@ class InvoiceTemplatesController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)

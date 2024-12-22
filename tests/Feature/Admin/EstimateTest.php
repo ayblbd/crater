@@ -1,15 +1,15 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Estimate\EstimatesController;
-use Crater\Http\Controllers\V1\Admin\Estimate\SendEstimateController;
-use Crater\Http\Requests\DeleteEstimatesRequest;
-use Crater\Http\Requests\EstimatesRequest;
-use Crater\Http\Requests\SendEstimatesRequest;
-use Crater\Mail\SendEstimateMail;
-use Crater\Models\Estimate;
-use Crater\Models\EstimateItem;
-use Crater\Models\Tax;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Estimate\EstimatesController;
+use App\Http\Controllers\V1\Admin\Estimate\SendEstimateController;
+use App\Http\Requests\DeleteEstimatesRequest;
+use App\Http\Requests\EstimatesRequest;
+use App\Http\Requests\SendEstimatesRequest;
+use App\Mail\SendEstimateMail;
+use App\Models\Estimate;
+use App\Models\EstimateItem;
+use App\Models\Tax;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
 
@@ -65,6 +65,18 @@ test('create estimate', function () {
     ]);
 });
 
+test('clone estimate', function () {
+
+    $estimate = Estimate::factory()->create();
+
+    $beforeCount = Estimate::count();
+
+    $response = $this->post("/api/v1/estimates/{$estimate->id}/clone");
+
+    $this->assertDatabaseCount('estimates', $beforeCount + 1);
+
+});
+
 test('store validates using a form request', function () {
     $this->assertActionUsesFormRequest(
         EstimatesController::class,
@@ -85,7 +97,7 @@ test('update estimate', function () {
     $estimate2 = Estimate::factory()->raw([
         'items' => [
             EstimateItem::factory()->raw([
-                'estimate_id' => $estimate->id
+                'estimate_id' => $estimate->id,
             ]),
         ],
         'taxes' => [
@@ -219,13 +231,20 @@ test('estimate mark as rejected', function () {
 });
 
 test('create invoice from estimate', function () {
-    $estimate = Estimate::factory()->create([
-        'estimate_date' => '1988-07-18',
-        'expiry_date' => '1988-08-18',
-    ]);
 
-    $response = postJson("api/v1/estimates/{$estimate->id}/convert-to-invoice")
-        ->assertStatus(200);
+    $estimate = Estimate::factory()
+        ->create([
+            'estimate_date' => now(),
+            'expiry_date' => now()->addMonth(),
+        ]);
+
+    $response = postJson("api/v1/estimates/{$estimate->id}/convert-to-invoice");
+
+    if ($response->status() !== 200) {
+        $this->fail('Response status is not 200. Response body: '.json_encode($response->json()));
+    }
+
+    $response->assertStatus(200);
 });
 
 test('delete multiple estimates using a form request', function () {
@@ -259,7 +278,7 @@ test('delete multiple estimates', function () {
         ]);
 
     foreach ($estimates as $estimate) {
-        $this->assertDeleted($estimate);
+        $this->assertModelMissing($estimate);
     }
 });
 
@@ -302,7 +321,7 @@ test('create estimate with tax per item', function () {
     ]);
 
     $this->assertDatabaseHas('taxes', [
-        'tax_type_id' => $estimate['items'][0]['taxes'][0]['tax_type_id']
+        'tax_type_id' => $estimate['items'][0]['taxes'][0]['tax_type_id'],
     ]);
 });
 
@@ -358,12 +377,12 @@ test('create estimate with EUR currency', function () {
 
     $this->assertDatabaseHas('taxes', [
         'tax_type_id' => $estimate['taxes'][0]['tax_type_id'],
-        'amount' => $estimate['tax']
+        'amount' => $estimate['tax'],
     ]);
 
     $this->assertDatabaseHas('estimate_items', [
         'item_id' => $estimate['items'][0]['item_id'],
-        'name' => $estimate['items'][0]['name']
+        'name' => $estimate['items'][0]['name'],
     ]);
 });
 

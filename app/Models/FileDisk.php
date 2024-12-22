@@ -1,24 +1,29 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
-use Crater\Carbon;
+use App\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class FileDisk extends Model
 {
     use HasFactory;
+
     public const DISK_TYPE_SYSTEM = 'SYSTEM';
+
     public const DISK_TYPE_REMOTE = 'REMOTE';
 
     protected $guarded = [
         'id',
     ];
 
-    protected $casts = [
-        'set_as_default' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'set_as_default' => 'boolean',
+        ];
+    }
 
     public function setCredentialsAttribute($value)
     {
@@ -119,11 +124,11 @@ class FileDisk extends Model
             if ($disk == 'dropbox') {
                 $root = $credentials['root'].'/';
             }
-            \Storage::disk($prefix.$disk)->put($root.'crater_temp.text', 'Check Credentials');
+            \Storage::disk($prefix.$disk)->put($root.'invoiceshelf_temp.text', 'Check Credentials');
 
-            if (\Storage::disk($prefix.$disk)->exists($root.'crater_temp.text')) {
+            if (\Storage::disk($prefix.$disk)->exists($root.'invoiceshelf_temp.text')) {
                 $exists = true;
-                \Storage::disk($prefix.$disk)->delete($root.'crater_temp.text');
+                \Storage::disk($prefix.$disk)->delete($root.'invoiceshelf_temp.text');
             }
         } catch (\Exception $e) {
             $exists = false;

@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Traits;
+namespace App\Traits;
 
+use App\Models\Address;
+use App\Models\CompanySetting;
+use App\Models\FileDisk;
 use Carbon\Carbon;
-use Crater\Models\Address;
-use Crater\Models\CompanySetting;
-use Crater\Models\FileDisk;
 use Illuminate\Support\Facades\App;
 
 trait GeneratesPdfTrait
@@ -20,7 +20,7 @@ trait GeneratesPdfTrait
             ]);
         }
 
-        $locale = CompanySetting::getSetting('language',  $this->company_id);
+        $locale = CompanySetting::getSetting('language', $this->company_id);
 
         App::setLocale($locale);
 
@@ -68,13 +68,13 @@ trait GeneratesPdfTrait
 
     public function generatePDF($collection_name, $file_name, $deleteExistingFile = false)
     {
-        $save_pdf_to_disk = CompanySetting::getSetting('save_pdf_to_disk',  $this->company_id);
+        $save_pdf_to_disk = CompanySetting::getSetting('save_pdf_to_disk', $this->company_id);
 
         if ($save_pdf_to_disk == 'NO') {
             return 0;
         }
 
-        $locale = CompanySetting::getSetting('language',  $this->company_id);
+        $locale = CompanySetting::getSetting('language', $this->company_id);
 
         App::setLocale($locale);
 
@@ -140,11 +140,14 @@ trait GeneratesPdfTrait
             '{COMPANY_ADDRESS_STREET_2}' => $companyAddress->address_street_2,
             '{COMPANY_PHONE}' => $companyAddress->phone,
             '{COMPANY_ZIP_CODE}' => $companyAddress->zip,
+            '{COMPANY_VAT}' => $this->company->vat_id,
+            '{COMPANY_TAX}' => $this->company->tax_id,
             '{CONTACT_DISPLAY_NAME}' => $customer->name,
             '{PRIMARY_CONTACT_NAME}' => $customer->contact_name,
             '{CONTACT_EMAIL}' => $customer->email,
             '{CONTACT_PHONE}' => $customer->phone,
             '{CONTACT_WEBSITE}' => $customer->website,
+            '{CONTACT_TAX_ID}' => __('pdf_tax_id').': '.$customer->tax_id,
         ];
 
         $customFields = $this->fields;
@@ -175,9 +178,9 @@ trait GeneratesPdfTrait
 
         $str = preg_replace("/<[^\/>]*>([\s]?)*<\/[^>]*>/", '', $str);
 
-        $str = str_replace("<p>", "", $str);
+        $str = str_replace('<p>', '', $str);
 
-        $str = str_replace("</p>", "</br>", $str);
+        $str = str_replace('</p>', '</br>', $str);
 
         return $str;
     }

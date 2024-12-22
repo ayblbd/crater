@@ -1,9 +1,10 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Installation;
+namespace App\Http\Controllers\V1\Installation;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Setting;
+use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use App\Space\InstallUtils;
 use Illuminate\Http\Request;
 
 class OnboardingWizardController extends Controller
@@ -11,19 +12,20 @@ class OnboardingWizardController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function getStep(Request $request)
     {
-        if (! \Storage::disk('local')->has('database_created')) {
+        if (! InstallUtils::dbMarkerExists()) {
             return response()->json([
                 'profile_complete' => 0,
+                'profile_language' => 'en',
             ]);
         }
 
         return response()->json([
             'profile_complete' => Setting::getSetting('profile_complete'),
+            'profile_language' => Setting::getSetting('profile_language'),
         ]);
     }
 
@@ -41,6 +43,15 @@ class OnboardingWizardController extends Controller
 
         return response()->json([
             'profile_complete' => Setting::getSetting('profile_complete'),
+        ]);
+    }
+
+    public function saveLanguage(Request $request)
+    {
+        Setting::setSetting('profile_language', $request->profile_language);
+
+        return response()->json([
+            'profile_language' => Setting::getSetting('profile_language'),
         ]);
     }
 }

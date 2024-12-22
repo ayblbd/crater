@@ -77,17 +77,6 @@
               @input="v$.currentTaxType.description.$touch()"
             />
           </BaseInputGroup>
-
-          <BaseInputGroup
-            :label="$t('tax_types.compound_tax')"
-            variant="horizontal"
-            class="flex flex-row-reverse"
-          >
-            <BaseSwitch
-              v-model="taxTypeStore.currentTaxType.compound_tax"
-              class="flex items-center"
-            />
-          </BaseInputGroup>
         </BaseInputGrid>
       </div>
       <div
@@ -169,7 +158,7 @@ const rules = computed(() => {
         required: helpers.withMessage(t('validation.required'), required),
         between: helpers.withMessage(
           t('validation.enter_valid_tax_rate'),
-          between(0, 100)
+          between(-100, 100)
         ),
       },
       description: {
@@ -209,14 +198,7 @@ async function submitTaxTypeData() {
 
 function SelectTax(taxData) {
   let amount = 0
-  if (taxData.compound_tax && estimateStore.getSubtotalWithDiscount) {
-    amount = Math.round(
-      ((estimateStore.getSubtotalWithDiscount +
-        estimateStore.getTotalSimpleTax) *
-        taxData.percent) /
-        100
-    )
-  } else if (estimateStore.getSubtotalWithDiscount && taxData.percent) {
+ if (estimateStore.getSubtotalWithDiscount && taxData.percent) {
     amount = Math.round(
       (estimateStore.getSubtotalWithDiscount * taxData.percent) / 100
     )
@@ -226,7 +208,6 @@ function SelectTax(taxData) {
     id: Guid.raw(),
     name: taxData.name,
     percent: taxData.percent,
-    compound_tax: taxData.compound_tax,
     tax_type_id: taxData.id,
     amount,
   }
@@ -242,7 +223,6 @@ function selectItemTax(taxData) {
       id: Guid.raw(),
       name: taxData.name,
       percent: taxData.percent,
-      compound_tax: taxData.compound_tax,
       tax_type_id: taxData.id,
     }
     modalStore.refreshData(data)

@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Console\Commands;
+namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
@@ -33,10 +33,8 @@ class CreateTemplateCommand extends Command
 
     /**
      * Execute the console command.
-     *
-     * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         $templateName = $this->argument('name');
         $type = $this->option('type');
@@ -46,7 +44,7 @@ class CreateTemplateCommand extends Command
         }
 
         if (Storage::disk('views')->exists("/app/pdf/{$type}/{$templateName}.blade.php")) {
-            $this->info("Template with given name already exists.");
+            $this->info('Template with given name already exists.');
 
             return 0;
         }

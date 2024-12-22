@@ -36,7 +36,7 @@
               </BaseInputGroup>
 
               <BaseInputGroup
-                :label="$tc('settings.currencies.currency')"
+                :label="$t('settings.currencies.currency')"
                 required
                 :error="
                   v$.currency_id.$error && v$.currency_id.$errors[0].$message
@@ -116,6 +116,15 @@
                   />
                 </BaseInputGroup>
               </BaseInputGrid>
+
+              <BaseInputGroup :label="$t('customers.tax_id')">
+                <BaseInput
+                  v-model="customerStore.currentCustomer.tax_id"
+                  type="text"
+                  class="mt-1 md:mt-0"
+                />
+              </BaseInputGroup>
+
             </BaseInputGrid>
           </BaseTab>
 
@@ -178,7 +187,7 @@
                   v$.confirm_password.$errors[0].$message
                 "
                 :content-loading="isFetchingInitialData"
-                label="Confirm Password"
+                :label="$t('customers.confirm_password')"
               >
                 <BaseInput
                   v-model.trim="customerStore.currentCustomer.confirm_password"

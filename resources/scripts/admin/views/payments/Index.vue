@@ -4,7 +4,7 @@
     <BasePageHeader :title="$t('payments.title')">
       <BaseBreadcrumb>
         <BaseBreadcrumbItem :title="$t('general.home')" to="dashboard" />
-        <BaseBreadcrumbItem :title="$tc('payments.payment', 2)" to="#" active />
+        <BaseBreadcrumbItem :title="$t('payments.payment', 2)" to="#" active />
       </BaseBreadcrumb>
 
       <template #actions>
@@ -165,7 +165,7 @@
         </template>
 
         <template #cell-name="{ row }">
-          <BaseText :text="row.data.customer.name" :length="30" tag="span" />
+          <BaseText :text="row.data.customer.name" tag="span" />
         </template>
 
         <template #cell-payment_mode="{ row }">
@@ -251,7 +251,7 @@ const paymentColumns = computed(() => {
     { key: 'payment_number', label: t('payments.payment_number') },
     { key: 'name', label: t('payments.customer') },
     { key: 'payment_mode', label: t('payments.payment_mode') },
-    { key: 'invoice_number', label: t('invoices.invoice_number') },
+    { key: 'invoice_number', label: t('payments.invoice') },
     { key: 'amount', label: t('payments.amount') },
     {
       key: 'actions',

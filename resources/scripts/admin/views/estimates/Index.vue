@@ -7,7 +7,7 @@
         <BaseBreadcrumbItem :title="$t('general.home')" to="dashboard" />
 
         <BaseBreadcrumbItem
-          :title="$tc('estimates.estimate', 2)"
+          :title="$t('estimates.estimate', 2)"
           to="#"
           active
         />
@@ -49,7 +49,7 @@
       :row-on-xl="true"
       @clear="clearFilter"
     >
-      <BaseInputGroup :label="$tc('customers.customer', 1)">
+      <BaseInputGroup :label="$t('customers.customer', 1)">
         <BaseCustomerSelectInput
           v-model="filters.customer_id"
           :placeholder="$t('customers.type_or_click')"
@@ -174,6 +174,7 @@
         :data="fetchData"
         :columns="estimateColumns"
         :placeholder-count="estimateStore.totalEstimateCount >= 20 ? 10 : 5"
+        :key="tableKey"
         class="mt-10"
       >
         <template #header>
@@ -211,12 +212,12 @@
         </template>
 
         <template #cell-name="{ row }">
-          <BaseText :text="row.data.customer.name" :length="30" />
+          <BaseText :text="row.data.customer.name" />
         </template>
 
         <template #cell-status="{ row }">
           <BaseEstimateStatusBadge :status="row.data.status" class="px-3 py-1">
-            {{ row.data.status }}
+            <BaseEstimateStatusLabel :status="row.data.status"/>
           </BaseEstimateStatusBadge>
         </template>
 
@@ -249,21 +250,23 @@ import abilities from '@/scripts/admin/stub/abilities'
 import ObservatoryIcon from '@/scripts/components/icons/empty/ObservatoryIcon.vue'
 import EstimateDropDown from '@/scripts/admin/components/dropdowns/EstimateIndexDropdown.vue'
 import SendEstimateModal from '@/scripts/admin/components/modal-components/SendEstimateModal.vue'
+import BaseEstimateStatusLabel from "@/scripts/components/base/BaseEstimateStatusLabel.vue";
 
 const estimateStore = useEstimateStore()
 const dialogStore = useDialogStore()
 const userStore = useUserStore()
 
 const tableComponent = ref(null)
+const tableKey = ref(0)
 const { t } = useI18n()
 const showFilters = ref(false)
 const status = ref([
-  'DRAFT',
-  'SENT',
-  'VIEWED',
-  'EXPIRED',
-  'ACCEPTED',
-  'REJECTED',
+  {label: t('estimates.draft'), value: 'DRAFT'},
+  {label: t('estimates.sent'), value: 'SENT'},
+  {label: t('estimates.viewed'), value: 'VIEWED'},
+  {label: t('estimates.expired'), value: 'EXPIRED'},
+  {label: t('estimates.accepted'), value: 'ACCEPTED'},
+  {label: t('estimates.rejected'), value: 'REJECTED'},
 ])
 
 const isRequestOngoing = ref(true)
@@ -406,6 +409,8 @@ function setFilters() {
     state.selectedEstimates = []
     state.selectAllField = false
   })
+
+  tableKey.value += 1
 
   refreshTable()
 }

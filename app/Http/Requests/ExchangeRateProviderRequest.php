@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -8,24 +8,20 @@ class ExchangeRateProviderRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'driver' => [
-                'required'
+                'required',
             ],
             'key' => [
                 'required',
@@ -37,11 +33,11 @@ class ExchangeRateProviderRequest extends FormRequest
                 'nullable',
             ],
             'driver_config' => [
-                'nullable'
+                'nullable',
             ],
             'active' => [
                 'nullable',
-                'boolean'
+                'boolean',
             ],
         ];
 
@@ -52,7 +48,7 @@ class ExchangeRateProviderRequest extends FormRequest
     {
         return collect($this->validated())
             ->merge([
-                'company_id' => $this->header('company')
+                'company_id' => $this->header('company'),
             ])
             ->toArray();
     }

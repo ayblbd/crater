@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Settings;
+namespace App\Http\Controllers\V1\Admin\Settings;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\UpdateSettingsRequest;
-use Crater\Models\Company;
-use Crater\Models\CompanySetting;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateSettingsRequest;
+use App\Models\Company;
+use App\Models\CompanySetting;
 use Illuminate\Support\Arr;
 
 class UpdateCompanySettingsController extends Controller
@@ -30,7 +30,7 @@ class UpdateCompanySettingsController extends Controller
         ) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot update company currency after transactions are created.'
+                'message' => 'Cannot update company currency after transactions are created.',
             ]);
         }
 
