@@ -393,9 +393,9 @@
 
         <div class="footer">
             <p>
-            LKIGAI TECHNOLOGY, 10 Rue liberté 3ème étage Appt N°5 Casablanca
+            {{ $invoice->customer->company->name }}, {{ $invoice->customer->company->address->address_street_1 }}
             <br>
-            N° du registre commercial: 604481 - ICE : 003392193000032 - Taxe professionelle : 34209111- Idenfiant fiscal : 60132868
+            N° du registre commercial: {{ $rc }} - ICE : {{ $ice }} - Taxe professionelle : {{ $tp }} - Idenfiant fiscal : {{ $if }} - Patente : {{ $patent }}
             </p>
         </div>
 

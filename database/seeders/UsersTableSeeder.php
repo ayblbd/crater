@@ -28,6 +28,11 @@ class UsersTableSeeder extends Seeder
             'name' => 'xyz',
             'owner_id' => $user->id,
             'slug' => 'xyz',
+            'ice' => '11112222',
+            'patent' => '123456',
+            'rc' => '123456rc',
+            'if' => '123456',
+            'tp' => '123456tp',
         ]);
 
         $company->unique_hash = Hashids::connection(Company::class)->encode($company->id);
