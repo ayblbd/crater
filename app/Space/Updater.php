@@ -1,9 +1,10 @@
 <?php
 
-namespace Crater\Space;
+namespace App\Space;
 
+use App\Events\UpdateFinished;
+use App\Models\Setting;
 use Artisan;
-use Crater\Events\UpdateFinished;
 use File;
 use GuzzleHttp\Exception\RequestException;
 use ZipArchive;
@@ -13,31 +14,26 @@ class Updater
 {
     use SiteApi;
 
-    public static function checkForUpdate($installed_version)
+    public static function checkForUpdate($installed_version, $updater_channel = 'stable')
     {
         $data = null;
-        if (env('APP_ENV') === 'development' || env('APP_ENV') === 'local') {
-            $url = 'downloads/check/latest/'.$installed_version.'?type=update&is_dev=1';
-        } else {
-            $url = 'downloads/check/latest/'.$installed_version.'?type=update';
-        }
+        $url = sprintf('releases/update-check/%s?channel=%s', $installed_version, $updater_channel);
 
         $response = static::getRemote($url, ['timeout' => 100, 'track_redirects' => true]);
 
+        $data = (object) ['success' => false, 'release' => null];
         if ($response && ($response->getStatusCode() == 200)) {
             $data = $response->getBody()->getContents();
+            $data = json_decode($data);
         }
 
-        $data = json_decode($data);
-
-        if ($data->success && $data->version && property_exists($data->version, 'extensions')) {
-            $extensions = $data->version->extensions;
-            $extensionData = [];
-            foreach (json_decode($extensions) as $extension) {
-                $extensionData[$extension] = phpversion($extension) ? true : false;
+        if ($data->success && $data->release && property_exists($data->release, 'extensions')) {
+            $extensions = [];
+            foreach ($data->release->extensions as $extension) {
+                $extensions[$extension] = phpversion($extension) !== false;
             }
-            $extensionData['php'.'('.$data->version->minimum_php_version.')'] = version_compare(phpversion(), $data->version->minimum_php_version, ">=");
-            $data->version->extensions = $extensionData;
+            $extensions['php'.'('.$data->release->min_php_version.')'] = version_compare(phpversion(), $data->release->min_php_version, '>=');
+            $data->release->extensions = $extensions;
         }
 
         return $data;
@@ -48,12 +44,7 @@ class Updater
         $data = null;
         $path = null;
 
-        if (env('APP_ENV') === 'development') {
-            $url = 'downloads/file/'.$new_version.'?type=update&is_dev=1&is_cmd='.$is_cmd;
-        } else {
-            $url = 'downloads/file/'.$new_version.'?type=update&is_cmd='.$is_cmd;
-        }
-
+        $url = 'releases/download/'.$new_version.'.zip';
         $response = static::getRemote($url, ['timeout' => 100, 'track_redirects' => true]);
 
         // Exception
@@ -118,7 +109,7 @@ class Updater
 
     public static function copyFiles($temp_extract_dir)
     {
-        if (! File::copyDirectory($temp_extract_dir.'/Crater', base_path())) {
+        if (! File::copyDirectory($temp_extract_dir.'/InvoiceShelf', base_path())) {
             return false;
         }
 
@@ -148,6 +139,7 @@ class Updater
 
     public static function finishUpdate($installed, $version)
     {
+        Setting::setSetting('version', $version);
         event(new UpdateFinished($installed, $version));
 
         return [

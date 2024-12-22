@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Policies;
+namespace App\Policies;
 
-use Crater\Models\User;
+use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Silber\Bouncer\Database\Role;
 
@@ -12,111 +12,57 @@ class RolePolicy
 
     /**
      * Determine whether the user can view any models.
-     *
-     * @param  \Crater\Models\User  $user
-     * @return mixed
      */
-    public function viewAny(User $user)
+    public function viewAny(User $user): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can view the model.
-     *
-     * @param  \Crater\Models\User  $user
-     * @param  \Silber\Bouncer\Database\Role  $role
-     * @return mixed
      */
-    public function view(User $user, Role $role)
+    public function view(User $user, Role $role): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can create models.
-     *
-     * @param  \Crater\Models\User  $user
-     * @return mixed
      */
-    public function create(User $user)
+    public function create(User $user): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can update the model.
-     *
-     * @param  \Crater\Models\User  $user
-     * @param  \Silber\Bouncer\Database\Role  $role
-     * @return mixed
      */
-    public function update(User $user, Role $role)
+    public function update(User $user, Role $role): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can delete the model.
-     *
-     * @param  \Crater\Models\User  $user
-     * @param  \Silber\Bouncer\Database\Role  $role
-     * @return mixed
      */
-    public function delete(User $user, Role $role)
+    public function delete(User $user, Role $role): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can restore the model.
-     *
-     * @param  \Crater\Models\User  $user
-     * @param  \Silber\Bouncer\Database\Role  $role
-     * @return mixed
      */
-    public function restore(User $user, Role $role)
+    public function restore(User $user, Role $role): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 
     /**
      * Determine whether the user can permanently delete the model.
-     *
-     * @param  \Crater\Models\User  $user
-     * @param  \Silber\Bouncer\Database\Role  $role
-     * @return mixed
      */
-    public function forceDelete(User $user, Role $role)
+    public function forceDelete(User $user, Role $role): bool
     {
-        if ($user->isOwner()) {
-            return true;
-        }
-
-        return false;
+        return $user->isOwner();
     }
 }

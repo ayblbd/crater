@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Update;
+namespace App\Http\Controllers\V1\Admin\Update;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Setting;
-use Crater\Space\Updater;
+use App\Http\Controllers\Controller;
+use App\Models\Setting;
+use App\Space\Updater;
 use Illuminate\Http\Request;
 
 class CheckVersionController extends Controller
@@ -12,7 +12,6 @@ class CheckVersionController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request)
@@ -20,14 +19,15 @@ class CheckVersionController extends Controller
         if ((! $request->user()) || (! $request->user()->isOwner())) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not allowed to update this app.'
+                'message' => 'You are not allowed to update this app.',
             ], 401);
         }
 
         set_time_limit(600); // 10 minutes
 
-        $json = Updater::checkForUpdate(Setting::getSetting('version'));
+        $channel = $request->get('channel', 'stable');
+        $response = Updater::checkForUpdate(Setting::getSetting('version'), $channel);
 
-        return response()->json($json);
+        return response()->json($response);
     }
 }

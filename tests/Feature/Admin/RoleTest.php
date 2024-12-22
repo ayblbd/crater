@@ -1,8 +1,9 @@
 <?php
 
-use Crater\Models\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\postJson;
 
 beforeEach(function () {
@@ -21,15 +22,15 @@ beforeEach(function () {
 
 test('create super admin role', function () {
     $data = [
-        "email" => "loremipsum@gmail.com",
-        "name" => "lorem",
-        "password" => "lorem@123"
+        'email' => 'loremipsum@gmail.com',
+        'name' => 'lorem',
+        'password' => 'lorem@123',
     ];
     $data['companies'] = [
         [
-            "role" => "super admin",
-            "id" => 1
-        ]
+            'role' => 'super admin',
+            'id' => 1,
+        ],
     ];
 
     postJson('api/v1/users', $data)

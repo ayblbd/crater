@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Invoice;
+namespace App\Http\Controllers\V1\Customer\Invoice;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\InvoiceResource;
-use Crater\Models\Company;
-use Crater\Models\Invoice;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\InvoiceResource;
+use App\Models\Company;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,7 +27,7 @@ class InvoicesController extends Controller
             ->latest()
             ->paginateData($limit);
 
-        return (InvoiceResource::collection($invoices))
+        return InvoiceResource::collection($invoices)
             ->additional(['meta' => [
                 'invoiceTotalCount' => Invoice::where('status', '<>', 'DRAFT')->whereCustomer(Auth::guard('customer')->id())->count(),
             ]]);

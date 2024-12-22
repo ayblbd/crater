@@ -1,8 +1,8 @@
 <?php
 
-use Crater\Models\Invoice;
-use Crater\Models\InvoiceItem;
-use Crater\Models\Item;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Item;
 use Illuminate\Support\Facades\Artisan;
 
 beforeEach(function () {
@@ -24,7 +24,6 @@ test('invoice item belongs to item', function () {
 
     $this->assertTrue($invoiceItem->item()->exists());
 });
-
 
 test('invoice item has many taxes', function () {
     $invoiceItem = InvoiceItem::factory()->hasTaxes(5)->create([

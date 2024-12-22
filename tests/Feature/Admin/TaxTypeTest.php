@@ -1,9 +1,9 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Settings\TaxTypesController;
-use Crater\Http\Requests\TaxTypeRequest;
-use Crater\Models\TaxType;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Settings\TaxTypesController;
+use App\Http\Requests\TaxTypeRequest;
+use App\Models\TaxType;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
 
@@ -84,13 +84,12 @@ test('delete tax type', function () {
             'success' => true,
         ]);
 
-    $this->assertDeleted($taxType);
+    $this->assertModelMissing($taxType);
 });
-
 
 test('create negative tax type', function () {
     $taxType = TaxType::factory()->raw([
-        'percent' => -9.99
+        'percent' => -9.99,
     ]);
 
     postJson('api/v1/tax-types', $taxType)

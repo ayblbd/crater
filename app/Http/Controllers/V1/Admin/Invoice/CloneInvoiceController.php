@@ -1,13 +1,13 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Invoice;
+namespace App\Http\Controllers\V1\Admin\Invoice;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\InvoiceResource;
+use App\Models\CompanySetting;
+use App\Models\Invoice;
+use App\Services\SerialNumberFormatter;
 use Carbon\Carbon;
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\InvoiceResource;
-use Crater\Models\CompanySetting;
-use Crater\Models\Invoice;
-use Crater\Services\SerialNumberFormatter;
 use Illuminate\Http\Request;
 use Vinkla\Hashids\Facades\Hashids;
 
@@ -16,7 +16,6 @@ class CloneInvoiceController extends Controller
     /**
      * Mail a specific invoice to the corresponding customer's email address.
      *
-     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function __invoke(Request $request, Invoice $invoice)
@@ -38,10 +37,10 @@ class CloneInvoiceController extends Controller
         );
 
         if ($dueDateEnabled === 'YES') {
-            $dueDateDays = CompanySetting::getSetting(
+            $dueDateDays = intval(CompanySetting::getSetting(
                 'invoice_due_date_days',
                 $request->header('company')
-            );
+            ));
             $due_date = Carbon::now()->addDays($dueDateDays)->format('Y-m-d');
         }
 
@@ -121,7 +120,7 @@ class CloneInvoiceController extends Controller
             foreach ($invoice->fields as $data) {
                 $customFields[] = [
                     'id' => $data->custom_field_id,
-                    'value' => $data->defaultAnswer
+                    'value' => $data->defaultAnswer,
                 ];
             }
 

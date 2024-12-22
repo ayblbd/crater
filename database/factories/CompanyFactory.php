@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Crater\Models\Company;
-use Crater\Models\User;
+use App\Models\Company;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CompanyFactory extends Factory
@@ -17,16 +17,14 @@ class CompanyFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'unique_hash' => str_random(20),
             'name' => $this->faker->name(),
             'owner_id' => User::where('role', 'super admin')->first()->id,
-            'slug' => $this->faker->word
+            'slug' => $this->faker->word(),
         ];
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Http\Requests\Customer;
+namespace App\Http\Requests\Customer;
 
-use Crater\Models\Address;
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -11,20 +11,16 @@ class CustomerProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [
@@ -97,8 +93,8 @@ class CustomerProfileRequest extends FormRequest
                 'nullable',
                 'file',
                 'mimes:gif,jpg,png',
-                'max:20000'
-            ]
+                'max:20000',
+            ],
         ];
     }
 
@@ -106,7 +102,7 @@ class CustomerProfileRequest extends FormRequest
     {
         return collect($this->shipping)
             ->merge([
-                'type' => Address::SHIPPING_TYPE
+                'type' => Address::SHIPPING_TYPE,
             ])
             ->toArray();
     }
@@ -115,7 +111,7 @@ class CustomerProfileRequest extends FormRequest
     {
         return collect($this->billing)
             ->merge([
-                'type' => Address::BILLING_TYPE
+                'type' => Address::BILLING_TYPE,
             ])
             ->toArray();
     }

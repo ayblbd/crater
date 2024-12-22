@@ -1,14 +1,15 @@
 <?php
 
-namespace Crater\Traits;
+namespace App\Traits;
 
-use Crater\Models\CustomField;
+use App\Models\CustomField;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 trait HasCustomFieldsTrait
 {
-    public function fields()
+    public function fields(): MorphMany
     {
-        return $this->morphMany('Crater\Models\CustomFieldValue', 'custom_field_valuable');
+        return $this->morphMany(\App\Models\CustomFieldValue::class, 'custom_field_valuable');
     }
 
     protected static function booted()
@@ -24,7 +25,7 @@ trait HasCustomFieldsTrait
     {
         foreach ($customFields as $field) {
             if (! is_array($field)) {
-                $field = (array)$field;
+                $field = (array) $field;
             }
             $customField = CustomField::find($field['id']);
 
@@ -43,7 +44,7 @@ trait HasCustomFieldsTrait
     {
         foreach ($customFields as $field) {
             if (! is_array($field)) {
-                $field = (array)$field;
+                $field = (array) $field;
             }
 
             $customField = CustomField::find($field['id']);

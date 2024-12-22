@@ -1,73 +1,74 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\RecurringInvoice;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\RecurringInvoice;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RecurringInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $companyCurrency = CompanySetting::getSetting('currency', $this->header('company'));
 
         $rules = [
             'starts_at' => [
-                'required'
+                'required',
             ],
             'send_automatically' => [
                 'required',
-                'boolean'
+                'boolean',
             ],
             'customer_id' => [
-                'required'
+                'required',
             ],
             'exchange_rate' => [
-                'nullable'
+                'nullable',
             ],
             'discount' => [
+                'numeric',
                 'required',
             ],
             'discount_val' => [
+                'integer',
                 'required',
             ],
             'sub_total' => [
+                'integer',
                 'required',
             ],
             'total' => [
+                'integer',
+                'max:999999999999',
                 'required',
             ],
             'tax' => [
                 'required',
             ],
             'status' => [
-                'required'
+                'required',
             ],
             'exchange_rate' => [
-                'nullable'
+                'nullable',
             ],
             'frequency' => [
-                'required'
+                'required',
             ],
             'limit_by' => [
-                'required'
+                'required',
             ],
             'limit_count' => [
                 'required_if:limit_by,COUNT',
@@ -76,24 +77,24 @@ class RecurringInvoiceRequest extends FormRequest
                 'required_if:limit_by,DATE',
             ],
             'items' => [
-                'required'
+                'required',
             ],
             'items.*' => [
-                'required'
-            ]
+                'required',
+            ],
         ];
 
         $customer = Customer::find($this->customer_id);
 
         if ($customer && $companyCurrency) {
-            if ((string)$customer->currency_id !== $companyCurrency) {
+            if ((string) $customer->currency_id !== $companyCurrency) {
                 $rules['exchange_rate'] = [
                     'required',
                 ];
-            };
+            }
         }
 
-        return  $rules;
+        return $rules;
     }
 
     public function getRecurringInvoicePayload()
@@ -114,7 +115,7 @@ class RecurringInvoiceRequest extends FormRequest
                 'discount_per_item' => CompanySetting::getSetting('discount_per_item', $this->header('company')) ?? 'NO',
                 'due_amount' => $this->total,
                 'exchange_rate' => $exchange_rate,
-                'currency_id' => $currency
+                'currency_id' => $currency,
             ])
             ->toArray();
     }

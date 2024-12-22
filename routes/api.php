@@ -1,110 +1,112 @@
 <?php
 
-use Crater\Http\Controllers\AppVersionController;
-use Crater\Http\Controllers\V1\Admin\Auth\ForgotPasswordController;
-use Crater\Http\Controllers\V1\Admin\Auth\ResetPasswordController;
-use Crater\Http\Controllers\V1\Admin\Backup\BackupsController;
-use Crater\Http\Controllers\V1\Admin\Backup\DownloadBackupController;
-use Crater\Http\Controllers\V1\Admin\Company\CompaniesController;
-use Crater\Http\Controllers\V1\Admin\Company\CompanyController as AdminCompanyController;
-use Crater\Http\Controllers\V1\Admin\Customer\CustomersController;
-use Crater\Http\Controllers\V1\Admin\Customer\CustomerStatsController;
-use Crater\Http\Controllers\V1\Admin\CustomField\CustomFieldsController;
-use Crater\Http\Controllers\V1\Admin\Dashboard\DashboardController;
-use Crater\Http\Controllers\V1\Admin\Estimate\ChangeEstimateStatusController;
-use Crater\Http\Controllers\V1\Admin\Estimate\ConvertEstimateController;
-use Crater\Http\Controllers\V1\Admin\Estimate\EstimatesController;
-use Crater\Http\Controllers\V1\Admin\Estimate\EstimateTemplatesController;
-use Crater\Http\Controllers\V1\Admin\Estimate\SendEstimateController;
-use Crater\Http\Controllers\V1\Admin\Estimate\SendEstimatePreviewController;
-use Crater\Http\Controllers\V1\Admin\ExchangeRate\ExchangeRateProviderController;
-use Crater\Http\Controllers\V1\Admin\ExchangeRate\GetActiveProviderController;
-use Crater\Http\Controllers\V1\Admin\ExchangeRate\GetExchangeRateController;
-use Crater\Http\Controllers\V1\Admin\ExchangeRate\GetSupportedCurrenciesController;
-use Crater\Http\Controllers\V1\Admin\ExchangeRate\GetUsedCurrenciesController;
-use Crater\Http\Controllers\V1\Admin\Expense\ExpenseCategoriesController;
-use Crater\Http\Controllers\V1\Admin\Expense\ExpensesController;
-use Crater\Http\Controllers\V1\Admin\Expense\ShowReceiptController;
-use Crater\Http\Controllers\V1\Admin\Expense\UploadReceiptController;
-use Crater\Http\Controllers\V1\Admin\General\BootstrapController;
-use Crater\Http\Controllers\V1\Admin\General\BulkExchangeRateController;
-use Crater\Http\Controllers\V1\Admin\General\ConfigController;
-use Crater\Http\Controllers\V1\Admin\General\CountriesController;
-use Crater\Http\Controllers\V1\Admin\General\CurrenciesController;
-use Crater\Http\Controllers\V1\Admin\General\DateFormatsController;
-use Crater\Http\Controllers\V1\Admin\General\GetAllUsedCurrenciesController;
-use Crater\Http\Controllers\V1\Admin\General\NextNumberController;
-use Crater\Http\Controllers\V1\Admin\General\NotesController;
-use Crater\Http\Controllers\V1\Admin\General\NumberPlaceholdersController;
-use Crater\Http\Controllers\V1\Admin\General\SearchController;
-use Crater\Http\Controllers\V1\Admin\General\SearchUsersController;
-use Crater\Http\Controllers\V1\Admin\General\TimezonesController;
-use Crater\Http\Controllers\V1\Admin\Invoice\ChangeInvoiceStatusController;
-use Crater\Http\Controllers\V1\Admin\Invoice\CloneInvoiceController;
-use Crater\Http\Controllers\V1\Admin\Invoice\InvoicesController;
-use Crater\Http\Controllers\V1\Admin\Invoice\InvoiceTemplatesController;
-use Crater\Http\Controllers\V1\Admin\Invoice\SendInvoiceController;
-use Crater\Http\Controllers\V1\Admin\Invoice\SendInvoicePreviewController;
-use Crater\Http\Controllers\V1\Admin\Item\ItemsController;
-use Crater\Http\Controllers\V1\Admin\Item\UnitsController;
-use Crater\Http\Controllers\V1\Admin\Mobile\AuthController;
-use Crater\Http\Controllers\V1\Admin\Modules\ApiTokenController;
-use Crater\Http\Controllers\V1\Admin\Modules\CompleteModuleInstallationController;
-use Crater\Http\Controllers\V1\Admin\Modules\CopyModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\DisableModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\DownloadModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\EnableModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\ModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\ModulesController;
-use Crater\Http\Controllers\V1\Admin\Modules\UnzipModuleController;
-use Crater\Http\Controllers\V1\Admin\Modules\UploadModuleController;
-use Crater\Http\Controllers\V1\Admin\Payment\PaymentMethodsController;
-use Crater\Http\Controllers\V1\Admin\Payment\PaymentsController;
-use Crater\Http\Controllers\V1\Admin\Payment\SendPaymentController;
-use Crater\Http\Controllers\V1\Admin\Payment\SendPaymentPreviewController;
-use Crater\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceController;
-use Crater\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceFrequencyController;
-use Crater\Http\Controllers\V1\Admin\Role\AbilitiesController;
-use Crater\Http\Controllers\V1\Admin\Role\RolesController;
-use Crater\Http\Controllers\V1\Admin\Settings\CompanyController;
-use Crater\Http\Controllers\V1\Admin\Settings\CompanyCurrencyCheckTransactionsController;
-use Crater\Http\Controllers\V1\Admin\Settings\DiskController;
-use Crater\Http\Controllers\V1\Admin\Settings\GetCompanyMailConfigurationController;
-use Crater\Http\Controllers\V1\Admin\Settings\GetCompanySettingsController;
-use Crater\Http\Controllers\V1\Admin\Settings\GetSettingsController;
-use Crater\Http\Controllers\V1\Admin\Settings\GetUserSettingsController;
-use Crater\Http\Controllers\V1\Admin\Settings\MailConfigurationController;
-use Crater\Http\Controllers\V1\Admin\Settings\TaxTypesController;
-use Crater\Http\Controllers\V1\Admin\Settings\UpdateCompanySettingsController;
-use Crater\Http\Controllers\V1\Admin\Settings\UpdateSettingsController;
-use Crater\Http\Controllers\V1\Admin\Settings\UpdateUserSettingsController;
-use Crater\Http\Controllers\V1\Admin\Update\CheckVersionController;
-use Crater\Http\Controllers\V1\Admin\Update\CopyFilesController;
-use Crater\Http\Controllers\V1\Admin\Update\DeleteFilesController;
-use Crater\Http\Controllers\V1\Admin\Update\DownloadUpdateController;
-use Crater\Http\Controllers\V1\Admin\Update\FinishUpdateController;
-use Crater\Http\Controllers\V1\Admin\Update\MigrateUpdateController;
-use Crater\Http\Controllers\V1\Admin\Update\UnzipUpdateController;
-use Crater\Http\Controllers\V1\Admin\Users\UsersController;
-use Crater\Http\Controllers\V1\Customer\Auth\ForgotPasswordController as AuthForgotPasswordController;
-use Crater\Http\Controllers\V1\Customer\Auth\ResetPasswordController as AuthResetPasswordController;
-use Crater\Http\Controllers\V1\Customer\Estimate\AcceptEstimateController as CustomerAcceptEstimateController;
-use Crater\Http\Controllers\V1\Customer\Estimate\EstimatesController as CustomerEstimatesController;
-use Crater\Http\Controllers\V1\Customer\Expense\ExpensesController as CustomerExpensesController;
-use Crater\Http\Controllers\V1\Customer\General\BootstrapController as CustomerBootstrapController;
-use Crater\Http\Controllers\V1\Customer\General\DashboardController as CustomerDashboardController;
-use Crater\Http\Controllers\V1\Customer\General\ProfileController as CustomerProfileController;
-use Crater\Http\Controllers\V1\Customer\Invoice\InvoicesController as CustomerInvoicesController;
-use Crater\Http\Controllers\V1\Customer\Payment\PaymentMethodController;
-use Crater\Http\Controllers\V1\Customer\Payment\PaymentsController as CustomerPaymentsController;
-use Crater\Http\Controllers\V1\Installation\AppDomainController;
-use Crater\Http\Controllers\V1\Installation\DatabaseConfigurationController;
-use Crater\Http\Controllers\V1\Installation\FilePermissionsController;
-use Crater\Http\Controllers\V1\Installation\FinishController;
-use Crater\Http\Controllers\V1\Installation\LoginController;
-use Crater\Http\Controllers\V1\Installation\OnboardingWizardController;
-use Crater\Http\Controllers\V1\Installation\RequirementsController;
-use Crater\Http\Controllers\V1\Webhook\CronJobController;
+use App\Http\Controllers\AppVersionController;
+use App\Http\Controllers\V1\Admin\Auth\ForgotPasswordController;
+use App\Http\Controllers\V1\Admin\Auth\ResetPasswordController;
+use App\Http\Controllers\V1\Admin\Backup\BackupsController;
+use App\Http\Controllers\V1\Admin\Backup\DownloadBackupController;
+use App\Http\Controllers\V1\Admin\Company\CompaniesController;
+use App\Http\Controllers\V1\Admin\Company\CompanyController as AdminCompanyController;
+use App\Http\Controllers\V1\Admin\Customer\CustomersController;
+use App\Http\Controllers\V1\Admin\Customer\CustomerStatsController;
+use App\Http\Controllers\V1\Admin\CustomField\CustomFieldsController;
+use App\Http\Controllers\V1\Admin\Dashboard\DashboardController;
+use App\Http\Controllers\V1\Admin\Estimate\ChangeEstimateStatusController;
+use App\Http\Controllers\V1\Admin\Estimate\CloneEstimateController;
+use App\Http\Controllers\V1\Admin\Estimate\ConvertEstimateController;
+use App\Http\Controllers\V1\Admin\Estimate\EstimatesController;
+use App\Http\Controllers\V1\Admin\Estimate\EstimateTemplatesController;
+use App\Http\Controllers\V1\Admin\Estimate\SendEstimateController;
+use App\Http\Controllers\V1\Admin\Estimate\SendEstimatePreviewController;
+use App\Http\Controllers\V1\Admin\ExchangeRate\ExchangeRateProviderController;
+use App\Http\Controllers\V1\Admin\ExchangeRate\GetActiveProviderController;
+use App\Http\Controllers\V1\Admin\ExchangeRate\GetExchangeRateController;
+use App\Http\Controllers\V1\Admin\ExchangeRate\GetSupportedCurrenciesController;
+use App\Http\Controllers\V1\Admin\ExchangeRate\GetUsedCurrenciesController;
+use App\Http\Controllers\V1\Admin\Expense\ExpenseCategoriesController;
+use App\Http\Controllers\V1\Admin\Expense\ExpensesController;
+use App\Http\Controllers\V1\Admin\Expense\ShowReceiptController;
+use App\Http\Controllers\V1\Admin\Expense\UploadReceiptController;
+use App\Http\Controllers\V1\Admin\General\BootstrapController;
+use App\Http\Controllers\V1\Admin\General\BulkExchangeRateController;
+use App\Http\Controllers\V1\Admin\General\ConfigController;
+use App\Http\Controllers\V1\Admin\General\CountriesController;
+use App\Http\Controllers\V1\Admin\General\CurrenciesController;
+use App\Http\Controllers\V1\Admin\General\DateFormatsController;
+use App\Http\Controllers\V1\Admin\General\GetAllUsedCurrenciesController;
+use App\Http\Controllers\V1\Admin\General\NextNumberController;
+use App\Http\Controllers\V1\Admin\General\NotesController;
+use App\Http\Controllers\V1\Admin\General\NumberPlaceholdersController;
+use App\Http\Controllers\V1\Admin\General\SearchController;
+use App\Http\Controllers\V1\Admin\General\SearchUsersController;
+use App\Http\Controllers\V1\Admin\General\TimezonesController;
+use App\Http\Controllers\V1\Admin\Invoice\ChangeInvoiceStatusController;
+use App\Http\Controllers\V1\Admin\Invoice\CloneInvoiceController;
+use App\Http\Controllers\V1\Admin\Invoice\InvoicesController;
+use App\Http\Controllers\V1\Admin\Invoice\InvoiceTemplatesController;
+use App\Http\Controllers\V1\Admin\Invoice\SendInvoiceController;
+use App\Http\Controllers\V1\Admin\Invoice\SendInvoicePreviewController;
+use App\Http\Controllers\V1\Admin\Item\ItemsController;
+use App\Http\Controllers\V1\Admin\Item\UnitsController;
+use App\Http\Controllers\V1\Admin\Mobile\AuthController;
+use App\Http\Controllers\V1\Admin\Modules\ApiTokenController;
+use App\Http\Controllers\V1\Admin\Modules\CompleteModuleInstallationController;
+use App\Http\Controllers\V1\Admin\Modules\CopyModuleController;
+use App\Http\Controllers\V1\Admin\Modules\DisableModuleController;
+use App\Http\Controllers\V1\Admin\Modules\DownloadModuleController;
+use App\Http\Controllers\V1\Admin\Modules\EnableModuleController;
+use App\Http\Controllers\V1\Admin\Modules\ModuleController;
+use App\Http\Controllers\V1\Admin\Modules\ModulesController;
+use App\Http\Controllers\V1\Admin\Modules\UnzipModuleController;
+use App\Http\Controllers\V1\Admin\Modules\UploadModuleController;
+use App\Http\Controllers\V1\Admin\Payment\PaymentMethodsController;
+use App\Http\Controllers\V1\Admin\Payment\PaymentsController;
+use App\Http\Controllers\V1\Admin\Payment\SendPaymentController;
+use App\Http\Controllers\V1\Admin\Payment\SendPaymentPreviewController;
+use App\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceController;
+use App\Http\Controllers\V1\Admin\RecurringInvoice\RecurringInvoiceFrequencyController;
+use App\Http\Controllers\V1\Admin\Role\AbilitiesController;
+use App\Http\Controllers\V1\Admin\Role\RolesController;
+use App\Http\Controllers\V1\Admin\Settings\CompanyController;
+use App\Http\Controllers\V1\Admin\Settings\CompanyCurrencyCheckTransactionsController;
+use App\Http\Controllers\V1\Admin\Settings\DiskController;
+use App\Http\Controllers\V1\Admin\Settings\GetCompanyMailConfigurationController;
+use App\Http\Controllers\V1\Admin\Settings\GetCompanySettingsController;
+use App\Http\Controllers\V1\Admin\Settings\GetSettingsController;
+use App\Http\Controllers\V1\Admin\Settings\GetUserSettingsController;
+use App\Http\Controllers\V1\Admin\Settings\MailConfigurationController;
+use App\Http\Controllers\V1\Admin\Settings\TaxTypesController;
+use App\Http\Controllers\V1\Admin\Settings\UpdateCompanySettingsController;
+use App\Http\Controllers\V1\Admin\Settings\UpdateSettingsController;
+use App\Http\Controllers\V1\Admin\Settings\UpdateUserSettingsController;
+use App\Http\Controllers\V1\Admin\Update\CheckVersionController;
+use App\Http\Controllers\V1\Admin\Update\CopyFilesController;
+use App\Http\Controllers\V1\Admin\Update\DeleteFilesController;
+use App\Http\Controllers\V1\Admin\Update\DownloadUpdateController;
+use App\Http\Controllers\V1\Admin\Update\FinishUpdateController;
+use App\Http\Controllers\V1\Admin\Update\MigrateUpdateController;
+use App\Http\Controllers\V1\Admin\Update\UnzipUpdateController;
+use App\Http\Controllers\V1\Admin\Users\UsersController;
+use App\Http\Controllers\V1\Customer\Auth\ForgotPasswordController as AuthForgotPasswordController;
+use App\Http\Controllers\V1\Customer\Auth\ResetPasswordController as AuthResetPasswordController;
+use App\Http\Controllers\V1\Customer\Estimate\AcceptEstimateController as CustomerAcceptEstimateController;
+use App\Http\Controllers\V1\Customer\Estimate\EstimatesController as CustomerEstimatesController;
+use App\Http\Controllers\V1\Customer\Expense\ExpensesController as CustomerExpensesController;
+use App\Http\Controllers\V1\Customer\General\BootstrapController as CustomerBootstrapController;
+use App\Http\Controllers\V1\Customer\General\DashboardController as CustomerDashboardController;
+use App\Http\Controllers\V1\Customer\General\ProfileController as CustomerProfileController;
+use App\Http\Controllers\V1\Customer\Invoice\InvoicesController as CustomerInvoicesController;
+use App\Http\Controllers\V1\Customer\Payment\PaymentMethodController;
+use App\Http\Controllers\V1\Customer\Payment\PaymentsController as CustomerPaymentsController;
+use App\Http\Controllers\V1\Installation\AppDomainController;
+use App\Http\Controllers\V1\Installation\DatabaseConfigurationController;
+use App\Http\Controllers\V1\Installation\FilePermissionsController;
+use App\Http\Controllers\V1\Installation\FinishController;
+use App\Http\Controllers\V1\Installation\LanguagesController;
+use App\Http\Controllers\V1\Installation\LoginController;
+use App\Http\Controllers\V1\Installation\OnboardingWizardController;
+use App\Http\Controllers\V1\Installation\RequirementsController;
+use App\Http\Controllers\V1\Webhook\CronJobController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -118,49 +120,43 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
 // ping
 //----------------------------------
 
 Route::get('ping', function () {
     return response()->json([
-        'success' => 'crater-self-hosted',
+        'success' => 'invoiceshelf-self-hosted',
     ]);
 })->name('ping');
-
 
 // Version 1 endpoints
 // --------------------------------------
 Route::prefix('/v1')->group(function () {
-
 
     // App version
     // ----------------------------------
 
     Route::get('/app/version', AppVersionController::class);
 
-
     // Authentication & Password Reset
     //----------------------------------
 
-    Route::group(['prefix' => 'auth'], function () {
+    Route::prefix('auth')->group(function () {
         Route::post('login', [AuthController::class, 'login']);
 
         Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
         // Send reset password mail
-        Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware("throttle:10,2");
+        Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->middleware('throttle:10,2');
 
         // handle reset password form process
         Route::post('reset/password', [ResetPasswordController::class, 'reset']);
     });
 
-
     // Countries
     //----------------------------------
 
     Route::get('/countries', CountriesController::class);
-
 
     // Onboarding
     //----------------------------------
@@ -169,6 +165,10 @@ Route::prefix('/v1')->group(function () {
         Route::get('/wizard-step', [OnboardingWizardController::class, 'getStep']);
 
         Route::post('/wizard-step', [OnboardingWizardController::class, 'updateStep']);
+
+        Route::post('/wizard-language', [OnboardingWizardController::class, 'saveLanguage']);
+
+        Route::get('/languages', [LanguagesController::class, 'languages']);
 
         Route::get('/requirements', [RequirementsController::class, 'requirements']);
 
@@ -184,7 +184,6 @@ Route::prefix('/v1')->group(function () {
 
         Route::post('/finish', FinishController::class);
     });
-
 
     Route::middleware(['auth:sanctum', 'company'])->group(function () {
         Route::middleware(['bouncer'])->group(function () {
@@ -203,18 +202,15 @@ Route::prefix('/v1')->group(function () {
                 Route::post('/bulk-update-exchange-rate', BulkExchangeRateController::class);
             });
 
-
             // Dashboard
             //----------------------------------
 
             Route::get('/dashboard', DashboardController::class);
 
-
             // Auth check
             //----------------------------------
 
             Route::get('/auth/check', [AuthController::class, 'check']);
-
 
             // Search users
             //----------------------------------
@@ -222,7 +218,6 @@ Route::prefix('/v1')->group(function () {
             Route::get('/search', SearchController::class);
 
             Route::get('/search/user', SearchUsersController::class);
-
 
             // MISC
             //----------------------------------
@@ -241,7 +236,6 @@ Route::prefix('/v1')->group(function () {
 
             Route::get('/current-company', AdminCompanyController::class);
 
-
             // Customers
             //----------------------------------
 
@@ -251,7 +245,6 @@ Route::prefix('/v1')->group(function () {
 
             Route::resource('customers', CustomersController::class);
 
-
             // Items
             //----------------------------------
 
@@ -260,7 +253,6 @@ Route::prefix('/v1')->group(function () {
             Route::resource('items', ItemsController::class);
 
             Route::resource('units', UnitsController::class);
-
 
             // Invoices
             //-------------------------------------------------
@@ -279,7 +271,6 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('invoices', InvoicesController::class);
 
-
             // Recurring Invoice
             //-------------------------------------------------
 
@@ -289,13 +280,14 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('recurring-invoices', RecurringInvoiceController::class);
 
-
             // Estimates
             //-------------------------------------------------
 
             Route::get('/estimates/{estimate}/send/preview', SendEstimatePreviewController::class);
 
             Route::post('/estimates/{estimate}/send', SendEstimateController::class);
+
+            Route::post('/estimates/{estimate}/clone', CloneEstimateController::class);
 
             Route::post('/estimates/{estimate}/status', ChangeEstimateStatusController::class);
 
@@ -306,7 +298,6 @@ Route::prefix('/v1')->group(function () {
             Route::post('/estimates/delete', [EstimatesController::class, 'delete']);
 
             Route::apiResource('estimates', EstimatesController::class);
-
 
             // Expenses
             //----------------------------------
@@ -321,7 +312,6 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('categories', ExpenseCategoriesController::class);
 
-
             // Payments
             //----------------------------------
 
@@ -335,12 +325,10 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('payment-methods', PaymentMethodsController::class);
 
-
             // Custom fields
             //----------------------------------
 
             Route::resource('custom-fields', CustomFieldsController::class);
-
 
             // Backup & Disk
             //----------------------------------
@@ -352,7 +340,6 @@ Route::prefix('/v1')->group(function () {
             Route::get('download-backup', DownloadBackupController::class);
 
             Route::get('/disk/drivers', [DiskController::class, 'getDiskDrivers']);
-
 
             // Exchange Rate
             //----------------------------------
@@ -367,10 +354,8 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('exchange-rate-providers', ExchangeRateProviderController::class);
 
-
             // Settings
             //----------------------------------
-
 
             Route::get('/me', [CompanyController::class, 'getUser']);
 
@@ -381,7 +366,6 @@ Route::prefix('/v1')->group(function () {
             Route::put('/me/settings', UpdateUserSettingsController::class);
 
             Route::post('/me/upload-avatar', [CompanyController::class, 'uploadAvatar']);
-
 
             Route::put('/company', [CompanyController::class, 'updateCompany']);
 
@@ -396,7 +380,6 @@ Route::prefix('/v1')->group(function () {
             Route::post('/settings', UpdateSettingsController::class);
 
             Route::get('/company/has-transactions', CompanyCurrencyCheckTransactionsController::class);
-
 
             // Mails
             //----------------------------------
@@ -413,12 +396,10 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('notes', NotesController::class);
 
-
             // Tax Types
             //----------------------------------
 
             Route::apiResource('tax-types', TaxTypesController::class);
-
 
             // Roles
             //----------------------------------
@@ -427,7 +408,6 @@ Route::prefix('/v1')->group(function () {
 
             Route::apiResource('roles', RolesController::class);
         });
-
 
         // Self Update
         //----------------------------------
@@ -457,14 +437,12 @@ Route::prefix('/v1')->group(function () {
 
         Route::get('companies', [CompaniesController::class, 'getUserCompanies']);
 
-
         // Users
         //----------------------------------
 
         Route::post('/users/delete', [UsersController::class, 'delete']);
 
         Route::apiResource('/users', UsersController::class);
-
 
         // Modules
         //----------------------------------
@@ -492,14 +470,12 @@ Route::prefix('/v1')->group(function () {
         });
     });
 
-
     Route::prefix('/{company:slug}/customer')->group(function () {
-
 
         // Authentication & Password Reset
         //----------------------------------
 
-        Route::group(['prefix' => 'auth'], function () {
+        Route::prefix('auth')->group(function () {
 
             // Send reset password mail
             Route::post('password/email', [AuthForgotPasswordController::class, 'sendResetLinkEmail']);
@@ -507,7 +483,6 @@ Route::prefix('/v1')->group(function () {
             // handle reset password form process
             Route::post('reset/password', [AuthResetPasswordController::class, 'reset'])->name('customer.password.reset');
         });
-
 
         // Invoices, Estimates, Payments and Expenses endpoints
         //-------------------------------------------------------
@@ -523,7 +498,7 @@ Route::prefix('/v1')->group(function () {
 
             Route::post('/estimate/{estimate}/status', CustomerAcceptEstimateController::class);
 
-            Route::get('estimates', [ CustomerEstimatesController::class, 'index']);
+            Route::get('estimates', [CustomerEstimatesController::class, 'index']);
 
             Route::get('estimates/{id}', [CustomerEstimatesController::class, 'show']);
 

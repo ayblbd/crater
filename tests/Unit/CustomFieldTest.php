@@ -1,6 +1,6 @@
 <?php
 
-use Crater\Models\CustomField;
+use App\Models\CustomField;
 use Illuminate\Support\Facades\Artisan;
 
 beforeEach(function () {

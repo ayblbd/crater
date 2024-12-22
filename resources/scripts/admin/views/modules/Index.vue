@@ -3,7 +3,7 @@
     <BasePageHeader :title="$t('modules.title')">
       <BaseBreadcrumb>
         <BaseBreadcrumbItem :title="$t('general.home')" to="dashboard" />
-        <BaseBreadcrumbItem :title="$tc('modules.module', 2)" to="#" active />
+        <BaseBreadcrumbItem :title="$t('modules.module', 2)" to="#" active />
       </BaseBreadcrumb>
     </BasePageHeader>
 
@@ -101,7 +101,7 @@
               target="_blank"
             >
               <BaseButton variant="primary-outline" type="button">
-                Sign up & Get Token
+                {{ $t('modules.sign_up_and_get_token') }}
               </BaseButton>
             </a>
           </div>

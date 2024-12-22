@@ -1,47 +1,52 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
+use App\Traits\HasCustomFieldsTrait;
 use Carbon\Carbon;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class InvoiceItem extends Model
 {
-    use HasFactory;
     use HasCustomFieldsTrait;
+    use HasFactory;
 
     protected $guarded = [
-        'id'
+        'id',
     ];
 
-    protected $casts = [
-        'price' => 'integer',
-        'total' => 'integer',
-        'discount' => 'float',
-        'quantity' => 'float',
-        'discount_val' => 'integer',
-        'tax' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'price' => 'integer',
+            'total' => 'integer',
+            'discount' => 'float',
+            'quantity' => 'float',
+            'discount_val' => 'integer',
+            'tax' => 'integer',
+        ];
+    }
 
-    public function invoice()
+    public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
-    public function item()
+    public function item(): BelongsTo
     {
         return $this->belongsTo(Item::class);
     }
 
-    public function taxes()
+    public function taxes(): HasMany
     {
         return $this->hasMany(Tax::class);
     }
 
-    public function recurringInvoice()
+    public function recurringInvoice(): BelongsTo
     {
         return $this->belongsTo(RecurringInvoice::class);
     }

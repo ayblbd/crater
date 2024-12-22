@@ -1,9 +1,11 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CustomFieldValue extends Model
 {
@@ -11,7 +13,7 @@ class CustomFieldValue extends Model
 
     protected $dates = [
         'date_answer',
-        'date_time_answer'
+        'date_time_answer',
     ];
 
     protected $guarded = [
@@ -25,7 +27,7 @@ class CustomFieldValue extends Model
     public function setTimeAnswerAttribute($value)
     {
         if ($value && $value != null) {
-            $this->attributes['time_answer'] = date("H:i:s", strtotime($value));
+            $this->attributes['time_answer'] = date('H:i:s', strtotime($value));
         } else {
             $this->attributes['time_answer'] = null;
         }
@@ -38,17 +40,17 @@ class CustomFieldValue extends Model
         return $this->$value_type;
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function customField()
+    public function customField(): BelongsTo
     {
         return $this->belongsTo(CustomField::class);
     }
 
-    public function customFieldValuable()
+    public function customFieldValuable(): MorphTo
     {
         return $this->morphTo();
     }

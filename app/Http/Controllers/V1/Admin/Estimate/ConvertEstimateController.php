@@ -1,14 +1,14 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Estimate;
+namespace App\Http\Controllers\V1\Admin\Estimate;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\InvoiceResource;
+use App\Models\CompanySetting;
+use App\Models\Estimate;
+use App\Models\Invoice;
+use App\Services\SerialNumberFormatter;
 use Carbon\Carbon;
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\InvoiceResource;
-use Crater\Models\CompanySetting;
-use Crater\Models\Estimate;
-use Crater\Models\Invoice;
-use Crater\Services\SerialNumberFormatter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Vinkla\Hashids\Facades\Hashids;
@@ -18,8 +18,6 @@ class ConvertEstimateController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Crater\Models\Estimate $estimate
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request, Estimate $estimate, Invoice $invoice)
@@ -37,10 +35,10 @@ class ConvertEstimateController extends Controller
         );
 
         if ($dueDateEnabled === 'YES') {
-            $dueDateDays = CompanySetting::getSetting(
+            $dueDateDays = intval(CompanySetting::getSetting(
                 'invoice_due_date_days',
                 $request->header('company')
-            );
+            ));
             $due_date = Carbon::now()->addDays($dueDateDays)->format('Y-m-d');
         }
 

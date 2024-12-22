@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
-use Crater\Models\Address;
+use App\Models\Address;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\Rule;
@@ -11,20 +11,16 @@ class CustomerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'name' => [
@@ -33,7 +29,7 @@ class CustomerRequest extends FormRequest
             'email' => [
                 'email',
                 'nullable',
-                Rule::unique('customers')->where('company_id', $this->header('company'))
+                Rule::unique('customers')->where('company_id', $this->header('company')),
             ],
             'password' => [
                 'nullable',
@@ -53,9 +49,11 @@ class CustomerRequest extends FormRequest
             'prefix' => [
                 'nullable',
             ],
+            'tax_id' => [
+                'nullable',
+            ],
             'enable_portal' => [
-
-                'boolean'
+                'boolean',
             ],
             'currency_id' => [
                 'nullable',
@@ -113,7 +111,7 @@ class CustomerRequest extends FormRequest
             ],
             'shipping.fax' => [
                 'nullable',
-            ]
+            ],
         ];
 
         if ($this->isMethod('PUT') && $this->email != null) {
@@ -122,7 +120,7 @@ class CustomerRequest extends FormRequest
                 'nullable',
                 Rule::unique('customers')->where('company_id', $this->header('company'))->ignore($this->route('customer')->id),
             ];
-        };
+        }
 
         return $rules;
     }
@@ -137,6 +135,7 @@ class CustomerRequest extends FormRequest
                 'password',
                 'phone',
                 'prefix',
+                'tax_id',
                 'company_name',
                 'contact_name',
                 'website',
@@ -156,7 +155,7 @@ class CustomerRequest extends FormRequest
     {
         return collect($this->shipping)
             ->merge([
-                'type' => Address::SHIPPING_TYPE
+                'type' => Address::SHIPPING_TYPE,
             ])
             ->toArray();
     }
@@ -165,7 +164,7 @@ class CustomerRequest extends FormRequest
     {
         return collect($this->billing)
             ->merge([
-                'type' => Address::BILLING_TYPE
+                'type' => Address::BILLING_TYPE,
             ])
             ->toArray();
     }

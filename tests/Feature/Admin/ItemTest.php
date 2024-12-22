@@ -1,12 +1,13 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Item\ItemsController;
-use Crater\Http\Requests\ItemsRequest;
-use Crater\Models\Item;
-use Crater\Models\Tax;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Item\ItemsController;
+use App\Http\Requests\ItemsRequest;
+use App\Models\Item;
+use App\Models\Tax;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
@@ -118,10 +119,10 @@ test('delete multiple items', function () {
         'ids' => $items->pluck('id'),
     ];
 
-    postJson("/api/v1/items/delete", $data)->assertOk();
+    postJson('/api/v1/items/delete', $data)->assertOk();
 
     foreach ($items as $item) {
-        $this->assertDeleted($item);
+        $this->assertModelMissing($item);
     }
 });
 

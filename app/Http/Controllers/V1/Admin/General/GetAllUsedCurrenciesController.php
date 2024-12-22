@@ -1,13 +1,13 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\General;
+namespace App\Http\Controllers\V1\Admin\General;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Currency;
-use Crater\Models\Estimate;
-use Crater\Models\Invoice;
-use Crater\Models\Payment;
-use Crater\Models\Tax;
+use App\Http\Controllers\Controller;
+use App\Models\Currency;
+use App\Models\Estimate;
+use App\Models\Invoice;
+use App\Models\Payment;
+use App\Models\Tax;
 use Illuminate\Http\Request;
 
 class GetAllUsedCurrenciesController extends Controller
@@ -15,7 +15,6 @@ class GetAllUsedCurrenciesController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request)
@@ -31,7 +30,7 @@ class GetAllUsedCurrenciesController extends Controller
         $currencies = array_merge($invoices, $taxes, $estimates, $payments);
 
         return response()->json([
-            'currencies' => Currency::whereIn('id', $currencies)->get()
+            'currencies' => Currency::whereIn('id', $currencies)->get(),
         ]);
     }
 }

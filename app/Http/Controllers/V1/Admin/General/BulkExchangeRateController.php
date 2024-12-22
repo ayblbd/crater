@@ -1,14 +1,14 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\General;
+namespace App\Http\Controllers\V1\Admin\General;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\BulkExchangeRateRequest;
-use Crater\Models\CompanySetting;
-use Crater\Models\Estimate;
-use Crater\Models\Invoice;
-use Crater\Models\Payment;
-use Crater\Models\Tax;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BulkExchangeRateRequest;
+use App\Models\CompanySetting;
+use App\Models\Estimate;
+use App\Models\Invoice;
+use App\Models\Payment;
+use App\Models\Tax;
 
 class BulkExchangeRateController extends Controller
 {
@@ -37,7 +37,7 @@ class BulkExchangeRateController extends Controller
                                 'base_sub_total' => $invoice->sub_total * $currency['exchange_rate'],
                                 'base_total' => $invoice->total * $currency['exchange_rate'],
                                 'base_tax' => $invoice->tax * $currency['exchange_rate'],
-                                'base_due_amount' => $invoice->due_amount * $currency['exchange_rate']
+                                'base_due_amount' => $invoice->due_amount * $currency['exchange_rate'],
                             ]);
 
                             $this->items($invoice);
@@ -53,7 +53,7 @@ class BulkExchangeRateController extends Controller
                                 'base_discount_val' => $estimate->sub_total * $currency['exchange_rate'],
                                 'base_sub_total' => $estimate->sub_total * $currency['exchange_rate'],
                                 'base_total' => $estimate->total * $currency['exchange_rate'],
-                                'base_tax' => $estimate->tax * $currency['exchange_rate']
+                                'base_tax' => $estimate->tax * $currency['exchange_rate'],
                             ]);
 
                             $this->items($estimate);
@@ -82,18 +82,18 @@ class BulkExchangeRateController extends Controller
             }
 
             $settings = [
-                'bulk_exchange_rate_configured' => 'YES'
+                'bulk_exchange_rate_configured' => 'YES',
             ];
 
             CompanySetting::setSettings($settings, $request->header('company'));
 
             return response()->json([
-                'success' => true
+                'success' => true,
             ]);
         }
 
         return response()->json([
-            'error' => false
+            'error' => false,
         ]);
     }
 
@@ -105,7 +105,7 @@ class BulkExchangeRateController extends Controller
                 'base_discount_val' => $item->discount_val * $model->exchange_rate,
                 'base_price' => $item->price * $model->exchange_rate,
                 'base_tax' => $item->tax * $model->exchange_rate,
-                'base_total' => $item->total * $model->exchange_rate
+                'base_total' => $item->total * $model->exchange_rate,
             ]);
 
             $this->taxes($item);

@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\PDF;
+namespace App\Http\Controllers\V1\PDF;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Payment;
+use App\Http\Controllers\Controller;
+use App\Models\Payment;
 
 class DownloadPaymentPdfController extends Controller
 {

@@ -1,20 +1,21 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
+use App\Traits\HasCustomFieldsTrait;
 use Carbon\Carbon;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Expense extends Model implements HasMedia
 {
+    use HasCustomFieldsTrait;
     use HasFactory;
     use InteractsWithMedia;
-    use HasCustomFieldsTrait;
 
     protected $dates = [
         'expense_date',
@@ -26,56 +27,59 @@ class Expense extends Model implements HasMedia
         'formattedExpenseDate',
         'formattedCreatedAt',
         'receipt',
-        'receiptMeta'
+        'receiptMeta',
     ];
 
-    protected $casts = [
-        'notes' => 'string',
-        'exchange_rate' => 'float'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'notes' => 'string',
+            'exchange_rate' => 'float',
+        ];
+    }
 
-    public function category()
+    public function category(): BelongsTo
     {
         return $this->belongsTo(ExpenseCategory::class, 'expense_category_id');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
 
-    public function paymentMethod()
+    public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class, 'currency_id');
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo('Crater\Models\User', 'creator_id');
+        return $this->belongsTo(\App\Models\User::class, 'creator_id');
     }
 
     public function getFormattedExpenseDateAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->expense_date)->format($dateFormat);
+        return Carbon::parse($this->expense_date)->translatedFormat($dateFormat);
     }
 
     public function getFormattedCreatedAtAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->created_at)->format($dateFormat);
+        return Carbon::parse($this->created_at)->translatedFormat($dateFormat);
     }
 
     public function getReceiptUrlAttribute($value)
@@ -85,7 +89,7 @@ class Expense extends Model implements HasMedia
         if ($media) {
             return [
                 'url' => $media->getFullUrl(),
-                'type' => $media->type
+                'type' => $media->type,
             ];
         }
 
@@ -235,7 +239,7 @@ class Expense extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$expense['currency_id'] !== $company_currency) {
+        if ((string) $expense['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($expense);
         }
 
@@ -258,7 +262,7 @@ class Expense extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($this);
         }
 

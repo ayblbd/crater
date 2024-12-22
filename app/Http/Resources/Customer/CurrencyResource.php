@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Http\Resources\Customer;
+namespace App\Http\Resources\Customer;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -10,9 +10,8 @@ class CurrencyResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,
@@ -23,7 +22,7 @@ class CurrencyResource extends JsonResource
             'thousand_separator' => $this->thousand_separator,
             'decimal_separator' => $this->decimal_separator,
             'swap_currency_symbol' => $this->swap_currency_symbol,
-            'exchange_rate' => $this->exchange_rate
+            'exchange_rate' => $this->exchange_rate,
         ];
     }
 }

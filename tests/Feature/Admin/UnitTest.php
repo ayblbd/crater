@@ -1,11 +1,12 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Item\UnitsController;
-use Crater\Http\Requests\UnitRequest;
-use Crater\Models\Unit;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Item\UnitsController;
+use App\Http\Requests\UnitRequest;
+use App\Models\Unit;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
@@ -97,5 +98,5 @@ test('delete unit', function () {
 
     $response->assertOk();
 
-    $this->assertDeleted($unit);
+    $this->assertModelMissing($unit);
 });

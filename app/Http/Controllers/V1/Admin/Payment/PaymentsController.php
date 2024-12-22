@@ -1,12 +1,12 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Payment;
+namespace App\Http\Controllers\V1\Admin\Payment;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\DeletePaymentsRequest;
-use Crater\Http\Requests\PaymentRequest;
-use Crater\Http\Resources\PaymentResource;
-use Crater\Models\Payment;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\DeletePaymentsRequest;
+use App\Http\Requests\PaymentRequest;
+use App\Http\Resources\PaymentResource;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 
 class PaymentsController extends Controller
@@ -31,7 +31,7 @@ class PaymentsController extends Controller
             ->latest()
             ->paginateData($limit);
 
-        return (PaymentResource::collection($payments))
+        return PaymentResource::collection($payments)
             ->additional(['meta' => [
                 'payment_total_count' => Payment::whereCompany()->count(),
             ]]);

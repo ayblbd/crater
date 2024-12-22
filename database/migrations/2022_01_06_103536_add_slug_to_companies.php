@@ -1,17 +1,15 @@
 <?php
 
-use Crater\Models\Company;
+use App\Models\Company;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Str;
 
-class AddSlugToCompanies extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $companies = Company::where('slug', null)->get();
 
@@ -25,11 +23,9 @@ class AddSlugToCompanies extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

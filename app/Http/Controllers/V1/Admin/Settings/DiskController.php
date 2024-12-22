@@ -1,18 +1,17 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Settings;
+namespace App\Http\Controllers\V1\Admin\Settings;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\DiskEnvironmentRequest;
-use Crater\Http\Resources\FileDiskResource;
-use Crater\Models\FileDisk;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\DiskEnvironmentRequest;
+use App\Http\Resources\FileDiskResource;
+use App\Models\FileDisk;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DiskController extends Controller
 {
     /**
-     *
      * @return JsonResponse
      */
     public function index(Request $request)
@@ -28,8 +27,6 @@ class DiskController extends Controller
     }
 
     /**
-     *
-     * @param DiskEnvironmentRequest $request
      * @return JsonResponse
      */
     public function store(DiskEnvironmentRequest $request)
@@ -46,9 +43,7 @@ class DiskController extends Controller
     }
 
     /**
-     *
-     * @param Request $request
-     * @param \Crater\Models\FileDisk $file_disk
+     * @param  \App\Models\FileDisk  $file_disk
      * @return JsonResponse
      */
     public function update(FileDisk $disk, Request $request)
@@ -72,7 +67,7 @@ class DiskController extends Controller
     }
 
     /**
-     * @param Request $request
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function show($disk)
@@ -88,7 +83,6 @@ class DiskController extends Controller
 
                 break;
 
-
             case 's3':
                 $diskData = [
                     'key' => '',
@@ -99,6 +93,16 @@ class DiskController extends Controller
                 ];
 
                 break;
+
+            case 's3compat':
+                $diskData = [
+                    'endpoint' => '',
+                    'key' => '',
+                    'secret' => '',
+                    'region' => '',
+                    'bucket' => '',
+                    'root' => '',
+                ];
 
             case 'doSpaces':
                 $diskData = [
@@ -132,7 +136,7 @@ class DiskController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Crater\Models\FileDisk  $taxType
+     * @param  \App\Models\FileDisk  $taxType
      * @return \Illuminate\Http\Response
      */
     public function destroy(FileDisk $disk)
@@ -151,7 +155,6 @@ class DiskController extends Controller
     }
 
     /**
-     *
      * @return JsonResponse
      */
     public function getDiskDrivers()
@@ -166,6 +169,10 @@ class DiskController extends Controller
             [
                 'name' => 'Amazon S3',
                 'value' => 's3',
+            ],
+            [
+                'name' => 'S3 Compatible Storage',
+                'value' => 's3compat',
             ],
             [
                 'name' => 'Digital Ocean Spaces',

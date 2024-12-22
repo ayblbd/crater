@@ -1,13 +1,13 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Invoice;
+namespace App\Http\Controllers\V1\Admin\Invoice;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests;
-use Crater\Http\Requests\DeleteInvoiceRequest;
-use Crater\Http\Resources\InvoiceResource;
-use Crater\Jobs\GenerateInvoicePdfJob;
-use Crater\Models\Invoice;
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
+use App\Http\Requests\DeleteInvoiceRequest;
+use App\Http\Resources\InvoiceResource;
+use App\Jobs\GenerateInvoicePdfJob;
+use App\Models\Invoice;
 use Illuminate\Http\Request;
 
 class InvoicesController extends Controller
@@ -21,16 +21,15 @@ class InvoicesController extends Controller
     {
         $this->authorize('viewAny', Invoice::class);
 
-        $limit = $request->has('limit') ? $request->limit : 10;
+        $limit = $request->input('limit', 10);
 
         $invoices = Invoice::whereCompany()
-            ->join('customers', 'customers.id', '=', 'invoices.customer_id')
             ->applyFilters($request->all())
-            ->select('invoices.*', 'customers.name')
+            ->with('customer')
             ->latest()
             ->paginateData($limit);
 
-        return (InvoiceResource::collection($invoices))
+        return InvoiceResource::collection($invoices)
             ->additional(['meta' => [
                 'invoice_total_count' => Invoice::whereCompany()->count(),
             ]]);
@@ -39,7 +38,7 @@ class InvoicesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(Requests\InvoicesRequest $request)
@@ -60,7 +59,6 @@ class InvoicesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Invoice $invoice
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Request $request, Invoice $invoice)
@@ -73,8 +71,7 @@ class InvoicesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  Invoice $invoice
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Requests\InvoicesRequest $request, Invoice $invoice)
@@ -95,7 +92,7 @@ class InvoicesController extends Controller
     /**
      * delete the specified resources in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function delete(DeleteInvoiceRequest $request)

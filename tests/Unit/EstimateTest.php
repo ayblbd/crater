@@ -1,9 +1,9 @@
 <?php
 
-use Crater\Http\Requests\EstimatesRequest;
-use Crater\Models\Estimate;
-use Crater\Models\EstimateItem;
-use Crater\Models\Tax;
+use App\Http\Requests\EstimatesRequest;
+use App\Models\Estimate;
+use App\Models\EstimateItem;
+use App\Models\Tax;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -95,7 +95,7 @@ test('update estimate', function () {
 
     $request->replace($newEstimate);
 
-    $estimate_number = explode("-", $newEstimate['estimate_number']);
+    $estimate_number = explode('-', $newEstimate['estimate_number']);
 
     $number_attributes['estimate_number'] = $estimate_number[0].'-'.sprintf('%06d', intval($estimate_number[1]));
 
@@ -137,7 +137,7 @@ test('create items', function () {
 
     $request = new Request();
 
-    $request->replace(['items' => $items ]);
+    $request->replace(['items' => $items]);
 
     Estimate::createItems($estimate, $request, $estimate->exchange_rate);
 
@@ -170,7 +170,7 @@ test('create taxes', function () {
 
     $request = new Request();
 
-    $request->replace(['taxes' => $taxes ]);
+    $request->replace(['taxes' => $taxes]);
 
     Estimate::createTaxes($estimate, $request, $estimate->exchange_rate);
 

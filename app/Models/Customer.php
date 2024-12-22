@@ -1,11 +1,14 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
+use App\Notifications\CustomerMailResetPasswordNotification;
+use App\Traits\HasCustomFieldsTrait;
 use Carbon\Carbon;
-use Crater\Notifications\CustomerMailResetPasswordNotification;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,14 +19,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Customer extends Authenticatable implements HasMedia
 {
     use HasApiTokens;
-    use Notifiable;
-    use InteractsWithMedia;
     use HasCustomFieldsTrait;
     use HasFactory;
     use HasRolesAndAbilities;
+    use InteractsWithMedia;
+    use Notifiable;
 
     protected $guarded = [
-        'id'
+        'id',
     ];
 
     protected $hidden = [
@@ -37,18 +40,21 @@ class Customer extends Authenticatable implements HasMedia
 
     protected $appends = [
         'formattedCreatedAt',
-        'avatar'
+        'avatar',
     ];
 
-    protected $casts = [
-        'enable_portal' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'enable_portal' => 'boolean',
+        ];
+    }
 
     public function getFormattedCreatedAtAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->created_at)->format($dateFormat);
+        return Carbon::parse($this->created_at)->translatedFormat($dateFormat);
     }
 
     public function setPasswordAttribute($value)
@@ -58,57 +64,57 @@ class Customer extends Authenticatable implements HasMedia
         }
     }
 
-    public function estimates()
+    public function estimates(): HasMany
     {
         return $this->hasMany(Estimate::class);
     }
 
-    public function expenses()
+    public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);
     }
 
-    public function invoices()
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function addresses()
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
     }
 
-    public function recurringInvoices()
+    public function recurringInvoices(): HasMany
     {
         return $this->hasMany(RecurringInvoice::class);
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'creator_id');
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function billingAddress()
+    public function billingAddress(): HasOne
     {
         return $this->hasOne(Address::class)->where('type', Address::BILLING_TYPE);
     }
 
-    public function shippingAddress()
+    public function shippingAddress(): HasOne
     {
         return $this->hasOne(Address::class)->where('type', Address::SHIPPING_TYPE);
     }
@@ -123,7 +129,7 @@ class Customer extends Authenticatable implements HasMedia
         $avatar = $this->getMedia('customer_avatar')->first();
 
         if ($avatar) {
-            return  asset($avatar->getUrl());
+            return asset($avatar->getUrl());
         }
 
         return 0;

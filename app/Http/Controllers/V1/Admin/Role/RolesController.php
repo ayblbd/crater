@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Role;
+namespace App\Http\Controllers\V1\Admin\Role;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\RoleRequest;
-use Crater\Http\Resources\RoleResource;
-use Crater\Models\User;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\RoleRequest;
+use App\Http\Resources\RoleResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Silber\Bouncer\BouncerFacade;
 use Silber\Bouncer\Database\Role;
@@ -52,7 +52,7 @@ class RolesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Spatie\Permission\Models\Role $role
+     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function show(Role $role)
@@ -66,7 +66,7 @@ class RolesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Spatie\Permission\Models\Role $role
+     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function update(RoleRequest $request, Role $role)
@@ -83,7 +83,7 @@ class RolesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Spatie\Permission\Models\Role $role
+     * @param  \Spatie\Permission\Models\Role  $role
      * @return \Illuminate\Http\Response
      */
     public function destroy(Role $role)
@@ -99,7 +99,7 @@ class RolesController extends Controller
         $role->delete();
 
         return response()->json([
-            'success' => true
+            'success' => true,
         ]);
     }
 

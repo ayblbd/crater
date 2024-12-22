@@ -1,15 +1,15 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Customer;
+namespace App\Http\Controllers\V1\Admin\Customer;
 
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CustomerResource;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\Expense;
+use App\Models\Invoice;
+use App\Models\Payment;
 use Carbon\Carbon;
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\CustomerResource;
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\Expense;
-use Crater\Models\Invoice;
-use Crater\Models\Payment;
 use Illuminate\Http\Request;
 
 class CustomerStatsController extends Controller
@@ -17,7 +17,6 @@ class CustomerStatsController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request, Customer $customer)
@@ -36,15 +35,16 @@ class CustomerStatsController extends Controller
         $start = Carbon::now();
         $end = Carbon::now();
         $terms = explode('-', $fiscalYear);
+        $companyStartMonth = intval($terms[0]);
 
-        if ($terms[0] <= $start->month) {
-            $startDate->month($terms[0])->startOfMonth();
-            $start->month($terms[0])->startOfMonth();
-            $end->month($terms[0])->endOfMonth();
+        if ($companyStartMonth <= $start->month) {
+            $startDate->month($companyStartMonth)->startOfMonth();
+            $start->month($companyStartMonth)->startOfMonth();
+            $end->month($companyStartMonth)->endOfMonth();
         } else {
-            $startDate->subYear()->month($terms[0])->startOfMonth();
-            $start->subYear()->month($terms[0])->startOfMonth();
-            $end->subYear()->month($terms[0])->endOfMonth();
+            $startDate->subYear()->month($companyStartMonth)->startOfMonth();
+            $start->subYear()->month($companyStartMonth)->startOfMonth();
+            $end->subYear()->month($companyStartMonth)->endOfMonth();
         }
 
         if ($request->has('previous_year')) {
@@ -88,7 +88,7 @@ class CustomerStatsController extends Controller
                 ($receiptTotals[$i] - $expenseTotals[$i])
             );
             $i++;
-            array_push($months, $start->format('M'));
+            array_push($months, $start->translatedFormat('M'));
             $monthCounter++;
             $end->startOfMonth();
             $start->addMonth()->startOfMonth();
@@ -136,7 +136,7 @@ class CustomerStatsController extends Controller
 
         return (new CustomerResource($customer))
             ->additional(['meta' => [
-                'chartData' => $chartData
+                'chartData' => $chartData,
             ]]);
     }
 }

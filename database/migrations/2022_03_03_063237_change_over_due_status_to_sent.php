@@ -1,16 +1,14 @@
 <?php
 
-use Crater\Models\Invoice;
+use App\Models\Invoice;
 use Illuminate\Database\Migrations\Migration;
 
-class ChangeOverDueStatusToSent extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $overdueInvoices = Invoice::where('status', 'OVERDUE')->get();
 
@@ -25,11 +23,9 @@ class ChangeOverDueStatusToSent extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

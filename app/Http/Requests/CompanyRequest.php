@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -9,28 +9,30 @@ class CompanyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'name' => [
                 'required',
                 Rule::unique('companies')->ignore($this->header('company'), 'id'),
             ],
+            'vat_id' => [
+                'nullable',
+            ],
+            'tax_id' => [
+                'nullable',
+            ],
             'slug' => [
-                'nullable'
+                'nullable',
             ],
             'address.country_id' => [
                 'required',
@@ -43,7 +45,9 @@ class CompanyRequest extends FormRequest
         return collect($this->validated())
             ->only([
                 'name',
-                'slug'
+                'slug',
+                'vat_id',
+                'tax_id',
             ])
             ->toArray();
     }

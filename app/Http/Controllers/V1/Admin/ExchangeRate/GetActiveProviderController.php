@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\ExchangeRate;
+namespace App\Http\Controllers\V1\Admin\ExchangeRate;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Currency;
-use Crater\Models\ExchangeRateProvider;
+use App\Http\Controllers\Controller;
+use App\Models\Currency;
+use App\Models\ExchangeRateProvider;
 use Illuminate\Http\Request;
 
 class GetActiveProviderController extends Controller
@@ -12,14 +12,13 @@ class GetActiveProviderController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Request $request, Currency $currency)
     {
         $query = ExchangeRateProvider::whereCompany()->whereJsonContains('currencies', $currency->code)
-                ->where('active', true)
-                ->get();
+            ->where('active', true)
+            ->get();
 
         if (count($query) !== 0) {
             return response()->json([

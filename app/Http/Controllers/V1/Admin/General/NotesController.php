@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\General;
+namespace App\Http\Controllers\V1\Admin\General;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\NotesRequest;
-use Crater\Http\Resources\NoteResource;
-use Crater\Models\Note;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\NotesRequest;
+use App\Http\Resources\NoteResource;
+use App\Models\Note;
 use Illuminate\Http\Request;
 
 class NotesController extends Controller
@@ -47,7 +47,6 @@ class NotesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Note  $note
      * @return \Illuminate\Http\Response
      */
     public function show(Note $note)
@@ -61,7 +60,6 @@ class NotesController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Crater\Models\Note  $note
      * @return \Illuminate\Http\Response
      */
     public function update(NotesRequest $request, Note $note)
@@ -76,7 +74,6 @@ class NotesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Crater\Models\Note  $note
      * @return \Illuminate\Http\Response
      */
     public function destroy(Note $note)

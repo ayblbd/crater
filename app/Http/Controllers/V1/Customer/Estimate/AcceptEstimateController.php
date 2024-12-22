@@ -1,23 +1,22 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Customer\Estimate;
+namespace App\Http\Controllers\V1\Customer\Estimate;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Resources\Customer\EstimateResource;
-use Crater\Models\Company;
-use Crater\Models\Estimate;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Customer\EstimateResource;
+use App\Models\Company;
+use App\Models\Estimate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AcceptEstimateController extends Controller
 {
     /**
-    * Handle the incoming request.
-    *
-    * @param  \Illuminate\Http\Request  $request
-    * @param  Estimate $estimate
-    * @return \Illuminate\Http\Response
-    */
+     * Handle the incoming request.
+     *
+     * @param  Estimate  $estimate
+     * @return \Illuminate\Http\Response
+     */
     public function __invoke(Request $request, Company $company, $id)
     {
         $estimate = $company->estimates()

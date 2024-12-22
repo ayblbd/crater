@@ -1,11 +1,12 @@
 <?php
 
-use Crater\Jobs\CreateBackupJob;
-use Crater\Models\FileDisk;
-use Crater\Models\User;
+use App\Jobs\CreateBackupJob;
+use App\Models\FileDisk;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
@@ -43,15 +44,15 @@ test('create backup', function () {
         'file_disk_id' => $disk->id,
     ];
 
-    $response = postJson("/api/v1/backups", $data);
+    $response = postJson('/api/v1/backups', $data);
 
     Queue::assertPushed(CreateBackupJob::class);
 
     $response = getJson("/api/v1/backups?disk={$disk->driver}&&file_disk_id={$disk->id}");
 
     $response->assertStatus(200)->assertJson([
-        "disks" => [
-            "local",
+        'disks' => [
+            'local',
         ],
     ]);
 });

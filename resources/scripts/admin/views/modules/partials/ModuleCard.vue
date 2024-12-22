@@ -74,7 +74,7 @@
           :src="
             data.author_avatar
               ? data.author_avatar
-              : 'http://localhost:3000/img/default-avatar.jpg'
+              : 'http://localhost:3000$images/default-avatar.jpg'
           "
           alt=""
         />
@@ -86,7 +86,6 @@
       <base-text
         :text="data.short_description"
         class="pt-4 text-gray-500 h-16 line-clamp-2"
-        :length="110"
       >
       </base-text>
       <div

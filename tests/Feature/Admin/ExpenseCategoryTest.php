@@ -1,11 +1,12 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Expense\ExpenseCategoriesController;
-use Crater\Http\Requests\ExpenseCategoryRequest;
-use Crater\Models\ExpenseCategory;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Expense\ExpenseCategoriesController;
+use App\Http\Requests\ExpenseCategoryRequest;
+use App\Models\ExpenseCategory;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
@@ -89,5 +90,5 @@ test('delete category', function () {
             'success' => true,
         ]);
 
-    $this->assertDeleted($category);
+    $this->assertModelMissing($category);
 });

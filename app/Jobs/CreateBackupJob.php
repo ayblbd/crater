@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Jobs;
+namespace App\Jobs;
 
-use Crater\Models\FileDisk;
+use App\Models\FileDisk;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -31,10 +31,8 @@ class CreateBackupJob implements ShouldQueue
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $fileDisk = FileDisk::find($this->data['file_disk_id']);
         $fileDisk->setConfig();
@@ -44,6 +42,9 @@ class CreateBackupJob implements ShouldQueue
         config(['backup.backup.destination.disks' => [$prefix.$fileDisk->driver]]);
 
         $backupJob = BackupJobFactory::createFromArray(config('backup'));
+        if (! defined('SIGINT')) {
+            $backupJob->disableSignals();
+        }
 
         if ($this->data['option'] === 'only-db') {
             $backupJob->dontBackupFilesystem();

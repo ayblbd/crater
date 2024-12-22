@@ -1,11 +1,12 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Payment\PaymentMethodsController;
-use Crater\Http\Requests\PaymentMethodRequest;
-use Crater\Models\PaymentMethod;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Payment\PaymentMethodsController;
+use App\Http\Requests\PaymentMethodRequest;
+use App\Models\PaymentMethod;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
@@ -101,5 +102,5 @@ test('delete payment method', function () {
 
     $response->assertOk();
 
-    $this->assertDeleted($method);
+    $this->assertModelMissing($method);
 });

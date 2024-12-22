@@ -2,9 +2,9 @@
 
 namespace Database\Factories;
 
-use Crater\Models\CustomField;
-use Crater\Models\CustomFieldValue;
-use Crater\Models\User;
+use App\Models\CustomField;
+use App\Models\CustomFieldValue;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CustomFieldValueFactory extends Factory
@@ -18,15 +18,13 @@ class CustomFieldValueFactory extends Factory
 
     /**
      * Define the model's default state.
-     *
-     * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'custom_field_valuable_type' => $this->faker->name ,
+            'custom_field_valuable_type' => $this->faker->name(),
             'custom_field_valuable_id' => 1,
-            'type' => $this->faker->name,
+            'type' => $this->faker->name(),
             'custom_field_id' => CustomField::factory(),
             'company_id' => User::find(1)->companies()->first()->id,
         ];

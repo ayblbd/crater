@@ -8,11 +8,12 @@
         {{ $t('settings.update_app.current_version') }}
       </label>
 
-      <div
-        class="
+      <div class="w-full border-b-2 border-gray-100 border-solid pb-4">
+        <div
+          class="
           box-border
-          flex
-          w-16
+          inline-block
+          w-auto
           p-3
           my-2
           text-sm text-gray-600
@@ -21,8 +22,13 @@
           rounded-md
           version
         "
-      >
-        {{ currentVersion }}
+        >
+          {{ currentVersion }}
+        </div>
+      </div>
+
+      <div class="w-full pt-4">
+        <BaseCheckbox v-model="insiderChannel" :label="$t('settings.update_app.insider_consent')"/>
       </div>
 
       <BaseButton
@@ -71,8 +77,8 @@
         <div
           class="
             box-border
-            flex
-            w-16
+            inline-block
+            w-auto
             p-3
             my-2
             text-sm text-gray-600
@@ -89,14 +95,30 @@
           class="
             pl-5
             mt-4
-            mb-8
+            mb-2
             text-sm
             leading-snug
             text-gray-500
             update-description
           "
           style="white-space: pre-wrap; max-width: 480px"
+          v-if="description"
           v-html="description"
+        ></div>
+
+        <div
+          class="
+            pl-5
+            mt-2
+            mb-8
+            text-sm
+            leading-snug
+            text-gray-500
+            update-changelog
+          "
+          style="white-space: pre-wrap; max-width: 480px"
+          v-if="changelog"
+          v-html="changelog"
         ></div>
 
         <label class="text-sm not-italic font-medium input-label">
@@ -188,6 +210,7 @@ import { handleError } from '@/scripts/helpers/error-handling'
 import { useCompanyStore } from '@/scripts/admin/stores/company'
 import { useExchangeRateStore } from '@/scripts/admin/stores/exchange-rate'
 import { useDialogStore } from '@/scripts/stores/dialog'
+import BaseCheckbox from "@/scripts/components/base/BaseCheckbox.vue";
 
 const notificationStore = useNotificationStore()
 const dialogStore = useDialogStore()
@@ -198,7 +221,9 @@ const exchangeRateStore = useExchangeRateStore()
 let isUpdateAvailable = ref(false)
 let isCheckingforUpdate = ref(false)
 let description = ref('')
+let changelog = ref('');
 let currentVersion = ref('')
+let insiderChannel = ref('')
 let requiredExtentions = ref(null)
 let deletedFiles = ref(null)
 let isUpdating = ref(false)
@@ -266,6 +291,7 @@ window.addEventListener('beforeunload', (event) => {
 
 axios.get('/api/v1/app/version').then((res) => {
   currentVersion.value = res.data.version
+  insiderChannel.value = res.data.channel === 'insider'
 })
 
 // comapnyStore
@@ -306,25 +332,30 @@ function statusClass(step) {
 async function checkUpdate() {
   try {
     isCheckingforUpdate.value = true
-    let response = await axios.get('/api/v1/check/update')
+    let response = await axios.get('/api/v1/check/update', {
+      params: {
+        channel: insiderChannel ? 'insider' : ''
+      }
+    });
     isCheckingforUpdate.value = false
-    if (!response.data.version) {
+    if (!response.data.release) {
       notificationStore.showNotification({
         title: 'Info!',
         type: 'info',
         message: t('settings.update_app.latest_message'),
       })
-      return
+      return;
     }
 
     if (response.data) {
       updateData.isMinor = response.data.is_minor
-      updateData.version = response.data.version.version
-      description.value = response.data.version.description
-      requiredExtentions.value = response.data.version.extensions
+      updateData.version = response.data.release.version
+      description.value = response.data.release.description
+      changelog.value = response.data.release.changelog
+      requiredExtentions.value = response.data.release.extensions
       isUpdateAvailable.value = true
-      minPhpVesrion.value = response.data.version.minimum_php_version
-      deletedFiles.value = response.data.version.deleted_files
+      minPhpVesrion.value = response.data.release.min_php_version
+      deletedFiles.value = response.data.release.deleted_files
     }
   } catch (e) {
     isUpdateAvailable.value = false
@@ -363,7 +394,6 @@ function onUpdateApp() {
             let updateParams = {
               version: updateData.version,
               installed: currentVersion.value,
-              deleted_files: deletedFiles.value,
               path: path || null,
             }
 
@@ -377,10 +407,7 @@ function onUpdateApp() {
             }
             // on finish
 
-            if (
-              currentStep.translationKey ==
-              'settings.update_app.finishing_update'
-            ) {
+            if (currentStep.translationKey == 'settings.update_app.finishing_update') {
               isUpdating.value = false
               notificationStore.showNotification({
                 type: 'success',
@@ -426,11 +453,12 @@ function getStatus(step) {
 </script>
 
 <style>
-.update-description ul {
-  list-style: disc !important;
+.update-changelog ul {
+  list-style: disc!important;
+  margin-left: 30px;
 }
-
-.update-description li {
+.update-changelog li {
   margin-bottom: 4px;
 }
+
 </style>

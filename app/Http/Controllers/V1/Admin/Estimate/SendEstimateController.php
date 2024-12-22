@@ -1,19 +1,18 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Estimate;
+namespace App\Http\Controllers\V1\Admin\Estimate;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\SendEstimatesRequest;
-use Crater\Models\Estimate;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\SendEstimatesRequest;
+use App\Models\Estimate;
 
 class SendEstimateController extends Controller
 {
     /**
-    * Handle the incoming request.
-    *
-    * @param  \Crater\Http\Requests\SendEstimatesRequest  $request
-    * @return \Illuminate\Http\JsonResponse
-    */
+     * Handle the incoming request.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function __invoke(SendEstimatesRequest $request, Estimate $estimate)
     {
         $this->authorize('send estimate', $estimate);

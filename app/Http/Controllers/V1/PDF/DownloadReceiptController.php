@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\PDF;
+namespace App\Http\Controllers\V1\PDF;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Models\Expense;
+use App\Http\Controllers\Controller;
+use App\Models\Expense;
 
 class DownloadReceiptController extends Controller
 {
@@ -11,8 +11,7 @@ class DownloadReceiptController extends Controller
      * Handle the incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Expense $expense
-     * @param   string $hash
+     * @param  string  $hash
      * @return \Illuminate\Http\Response
      */
     public function __invoke(Expense $expense)

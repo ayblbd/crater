@@ -1,19 +1,17 @@
 <?php
 
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\Item;
-use Crater\Models\User;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\Item;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 
-class CalculateBaseValuesForExistingData extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
         $user = User::where('role', 'super admin')->first();
 
@@ -42,7 +40,7 @@ class CalculateBaseValuesForExistingData extends Migration
                                 'base_sub_total' => $invoice->sub_total,
                                 'base_total' => $invoice->total,
                                 'base_tax' => $invoice->tax,
-                                'base_due_amount' => $invoice->due_amount
+                                'base_due_amount' => $invoice->due_amount,
                             ]);
                         } else {
                             $invoice->update([
@@ -72,7 +70,7 @@ class CalculateBaseValuesForExistingData extends Migration
                                 'base_discount_val' => $estimate->sub_total,
                                 'base_sub_total' => $estimate->sub_total,
                                 'base_total' => $estimate->total,
-                                'base_tax' => $estimate->tax
+                                'base_tax' => $estimate->tax,
                             ]);
                         } else {
                             $estimate->update([
@@ -89,7 +87,7 @@ class CalculateBaseValuesForExistingData extends Migration
                             $payment->update([
                                 'currency_id' => $currency_id,
                                 'base_amount' => $payment->amount,
-                                'exchange_rate' => 1
+                                'exchange_rate' => 1,
                             ]);
                         } else {
                             $payment->update([
@@ -110,7 +108,7 @@ class CalculateBaseValuesForExistingData extends Migration
                 'base_discount_val' => $item->discount_val * $model->exchange_rate,
                 'base_price' => $item->price * $model->exchange_rate,
                 'base_tax' => $item->tax * $model->exchange_rate,
-                'base_total' => $item->total * $model->exchange_rate
+                'base_total' => $item->total * $model->exchange_rate,
             ]);
 
             $this->taxes($item, $model->currency_id);
@@ -134,11 +132,9 @@ class CalculateBaseValuesForExistingData extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         //
     }
-}
+};

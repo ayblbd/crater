@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Settings;
+namespace App\Http\Controllers\V1\Admin\Settings;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\GetSettingRequest;
-use Crater\Models\Setting;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\GetSettingRequest;
+use App\Models\Setting;
 use Illuminate\Http\Request;
 
 class GetSettingsController extends Controller
@@ -22,7 +22,7 @@ class GetSettingsController extends Controller
         $setting = Setting::getSetting($request->key);
 
         return response()->json([
-            $request->key => $setting
+            $request->key => $setting,
         ]);
     }
 }

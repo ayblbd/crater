@@ -1,10 +1,10 @@
 <?php
 
-namespace Crater\Http\Requests;
+namespace App\Http\Requests;
 
-use Crater\Models\CompanySetting;
-use Crater\Models\Customer;
-use Crater\Models\Estimate;
+use App\Models\CompanySetting;
+use App\Models\Customer;
+use App\Models\Estimate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -12,20 +12,16 @@ class EstimatesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
-     *
-     * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         $rules = [
             'estimate_date' => [
@@ -39,28 +35,34 @@ class EstimatesRequest extends FormRequest
             ],
             'estimate_number' => [
                 'required',
-                Rule::unique('estimates')->where('company_id', $this->header('company'))
+                Rule::unique('estimates')->where('company_id', $this->header('company')),
             ],
             'exchange_rate' => [
-                'nullable'
+                'nullable',
             ],
             'discount' => [
+                'numeric',
                 'required',
             ],
             'discount_val' => [
+                'integer',
                 'required',
             ],
             'sub_total' => [
+                'integer',
                 'required',
             ],
             'total' => [
+                'integer',
+                'numeric',
+                'max:999999999999',
                 'required',
             ],
             'tax' => [
                 'required',
             ],
             'template_name' => [
-                'required'
+                'required',
             ],
             'items' => [
                 'required',
@@ -77,9 +79,11 @@ class EstimatesRequest extends FormRequest
                 'required',
             ],
             'items.*.quantity' => [
+                'numeric',
                 'required',
             ],
             'items.*.price' => [
+                'integer',
                 'required',
             ],
         ];
@@ -89,11 +93,11 @@ class EstimatesRequest extends FormRequest
         $customer = Customer::find($this->customer_id);
 
         if ($companyCurrency && $customer) {
-            if ((string)$customer->currency_id !== $companyCurrency) {
+            if ((string) $customer->currency_id !== $companyCurrency) {
                 $rules['exchange_rate'] = [
                     'required',
                 ];
-            };
+            }
         }
 
         if ($this->isMethod('PUT')) {

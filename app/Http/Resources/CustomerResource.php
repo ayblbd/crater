@@ -1,6 +1,6 @@
 <?php
 
-namespace Crater\Http\Resources;
+namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -10,9 +10,8 @@ class CustomerResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->id,
@@ -36,6 +35,7 @@ class CustomerResource extends JsonResource
             'due_amount' => $this->due_amount,
             'base_due_amount' => $this->base_due_amount,
             'prefix' => $this->prefix,
+            'tax_id' => $this->tax_id,
             'billing' => $this->when($this->billingAddress()->exists(), function () {
                 return new AddressResource($this->billingAddress);
             }),

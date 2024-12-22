@@ -2,7 +2,7 @@
   <FileDiskModal />
 
   <BaseSettingCard
-    :title="$tc('settings.disk.title', 1)"
+    :title="$t('settings.disk.title', 1)"
     :description="$t('settings.disk.description')"
   >
     <template #action>
@@ -31,7 +31,7 @@
               .color
           "
         >
-          {{ row.data.set_as_default ? 'Yes' : 'No'.replace('_', ' ') }}
+          {{ row.data.set_as_default ? $t('general.yes') : $t('general.no').replace('_', ' ') }}
         </BaseBadge>
       </template>
 
@@ -93,7 +93,7 @@ import FileDiskModal from '@/scripts/admin/components/modal-components/FileDiskM
 
 const utils = inject('utils')
 
-const modelStore = useModalStore()
+const modalStore = useModalStore()
 const diskStore = useDiskStore()
 const companyStore = useCompanyStore()
 const dialogStore = useDialogStore()
@@ -189,7 +189,7 @@ function isNotSystemDisk(disk) {
 }
 
 function openCreateDiskModal() {
-  modelStore.openModal({
+  modalStore.openModal({
     title: t('settings.disk.new_disk'),
     componentName: 'FileDiskModal',
     variant: 'lg',
@@ -198,7 +198,7 @@ function openCreateDiskModal() {
 }
 
 function openEditDiskModal(data) {
-  modelStore.openModal({
+  modalStore.openModal({
     title: t('settings.disk.edit_file_disk'),
     componentName: 'FileDiskModal',
     variant: 'lg',

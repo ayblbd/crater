@@ -1,11 +1,11 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Item;
+namespace App\Http\Controllers\V1\Admin\Item;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\UnitRequest;
-use Crater\Http\Resources\UnitResource;
-use Crater\Models\Unit;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UnitRequest;
+use App\Http\Resources\UnitResource;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class UnitsController extends Controller
@@ -47,7 +47,6 @@ class UnitsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
     public function show(Unit $unit)
@@ -61,7 +60,6 @@ class UnitsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Crater\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
     public function update(UnitRequest $request, Unit $unit)
@@ -76,7 +74,6 @@ class UnitsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \Crater\Models\Unit  $unit
      * @return \Illuminate\Http\Response
      */
     public function destroy(Unit $unit)

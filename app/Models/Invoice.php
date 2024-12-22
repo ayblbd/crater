@@ -1,17 +1,21 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
 use App;
-use Barryvdh\DomPDF\Facade as PDF;
+use App\Mail\SendInvoiceMail;
+use App\Services\SerialNumberFormatter;
+use App\Traits\GeneratesPdfTrait;
+use App\Traits\HasCustomFieldsTrait;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
-use Crater\Mail\SendInvoiceMail;
-use Crater\Services\SerialNumberFormatter;
-use Crater\Traits\GeneratesPdfTrait;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Nwidart\Modules\Facades\Module;
 use Spatie\MediaLibrary\HasMedia;
@@ -20,18 +24,23 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class Invoice extends Model implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
     use GeneratesPdfTrait;
     use HasCustomFieldsTrait;
+    use HasFactory;
+    use InteractsWithMedia;
 
     public const STATUS_DRAFT = 'DRAFT';
+
     public const STATUS_SENT = 'SENT';
+
     public const STATUS_VIEWED = 'VIEWED';
+
     public const STATUS_COMPLETED = 'COMPLETED';
 
     public const STATUS_UNPAID = 'UNPAID';
+
     public const STATUS_PARTIALLY_PAID = 'PARTIALLY_PAID';
+
     public const STATUS_PAID = 'PAID';
 
     protected $dates = [
@@ -39,16 +48,7 @@ class Invoice extends Model implements HasMedia
         'updated_at',
         'deleted_at',
         'invoice_date',
-        'due_date'
-    ];
-
-    protected $casts = [
-        'total' => 'integer',
-        'tax' => 'integer',
-        'sub_total' => 'integer',
-        'discount' => 'float',
-        'discount_val' => 'integer',
-        'exchange_rate' => 'float'
+        'due_date',
     ];
 
     protected $guarded = [
@@ -62,52 +62,64 @@ class Invoice extends Model implements HasMedia
         'invoicePdfUrl',
     ];
 
-    public function transactions()
+    protected function casts(): array
+    {
+        return [
+            'total' => 'integer',
+            'tax' => 'integer',
+            'sub_total' => 'integer',
+            'discount' => 'float',
+            'discount_val' => 'integer',
+            'exchange_rate' => 'float',
+        ];
+    }
+
+    public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
-    public function emailLogs()
+    public function emailLogs(): MorphMany
     {
         return $this->morphMany('App\Models\EmailLog', 'mailable');
     }
 
-    public function items()
+    public function items(): HasMany
     {
-        return $this->hasMany('Crater\Models\InvoiceItem');
+        return $this->hasMany(\App\Models\InvoiceItem::class);
     }
 
-    public function taxes()
+    public function taxes(): HasMany
     {
         return $this->hasMany(Tax::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function recurringInvoice()
+    public function recurringInvoice(): BelongsTo
     {
         return $this->belongsTo(RecurringInvoice::class);
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
@@ -177,14 +189,14 @@ class Invoice extends Model implements HasMedia
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->due_date)->format($dateFormat);
+        return Carbon::parse($this->due_date)->translatedFormat($dateFormat);
     }
 
     public function getFormattedInvoiceDateAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->invoice_date)->format($dateFormat);
+        return Carbon::parse($this->invoice_date)->translatedFormat($dateFormat);
     }
 
     public function scopeWhereStatus($query, $status)
@@ -236,53 +248,34 @@ class Invoice extends Model implements HasMedia
 
     public function scopeApplyFilters($query, array $filters)
     {
-        $filters = collect($filters);
+        $filters = collect($filters)->filter()->all();
 
-        if ($filters->get('search')) {
-            $query->whereSearch($filters->get('search'));
-        }
-
-        if ($filters->get('status')) {
-            if (
-                $filters->get('status') == self::STATUS_UNPAID ||
-                $filters->get('status') == self::STATUS_PARTIALLY_PAID ||
-                $filters->get('status') == self::STATUS_PAID
-            ) {
-                $query->wherePaidStatus($filters->get('status'));
-            } elseif ($filters->get('status') == 'DUE') {
-                $query->whereDueStatus($filters->get('status'));
-            } else {
-                $query->whereStatus($filters->get('status'));
-            }
-        }
-
-        if ($filters->get('paid_status')) {
-            $query->wherePaidStatus($filters->get('status'));
-        }
-
-        if ($filters->get('invoice_id')) {
-            $query->whereInvoice($filters->get('invoice_id'));
-        }
-
-        if ($filters->get('invoice_number')) {
-            $query->whereInvoiceNumber($filters->get('invoice_number'));
-        }
-
-        if ($filters->get('from_date') && $filters->get('to_date')) {
-            $start = Carbon::createFromFormat('Y-m-d', $filters->get('from_date'));
-            $end = Carbon::createFromFormat('Y-m-d', $filters->get('to_date'));
+        return $query->when($filters['search'] ?? null, function ($query, $search) {
+            $query->whereSearch($search);
+        })->when($filters['status'] ?? null, function ($query, $status) {
+            match ($status) {
+                self::STATUS_UNPAID, self::STATUS_PARTIALLY_PAID, self::STATUS_PAID => $query->wherePaidStatus($status),
+                'DUE' => $query->whereDueStatus($status),
+                default => $query->whereStatus($status),
+            };
+        })->when($filters['paid_status'] ?? null, function ($query, $paidStatus) {
+            $query->wherePaidStatus($paidStatus);
+        })->when($filters['invoice_id'] ?? null, function ($query, $invoiceId) {
+            $query->whereInvoice($invoiceId);
+        })->when($filters['invoice_number'] ?? null, function ($query, $invoiceNumber) {
+            $query->whereInvoiceNumber($invoiceNumber);
+        })->when(($filters['from_date'] ?? null) && ($filters['to_date'] ?? null), function ($query) use ($filters) {
+            $start = Carbon::parse($filters['from_date']);
+            $end = Carbon::parse($filters['to_date']);
             $query->invoicesBetween($start, $end);
-        }
-
-        if ($filters->get('customer_id')) {
-            $query->whereCustomer($filters->get('customer_id'));
-        }
-
-        if ($filters->get('orderByField') || $filters->get('orderBy')) {
-            $field = $filters->get('orderByField') ? $filters->get('orderByField') : 'sequence_number';
-            $orderBy = $filters->get('orderBy') ? $filters->get('orderBy') : 'desc';
-            $query->whereOrder($field, $orderBy);
-        }
+        })->when($filters['customer_id'] ?? null, function ($query, $customerId) {
+            $query->where('customer_id', $customerId);
+        })->when($filters['orderByField'] ?? null, function ($query, $orderByField) use ($filters) {
+            $orderBy = $filters['orderBy'] ?? 'desc';
+            $query->orderBy($orderByField, $orderBy);
+        }, function ($query) {
+            $query->orderBy('sequence_number', 'desc');
+        });
     }
 
     public function scopeWhereInvoice($query, $invoice_id)
@@ -339,7 +332,7 @@ class Invoice extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($invoice);
         }
 
@@ -356,7 +349,7 @@ class Invoice extends Model implements HasMedia
             'items.fields',
             'items.fields.customField',
             'customer',
-            'taxes'
+            'taxes',
         ])
             ->find($invoice->id);
 
@@ -381,7 +374,7 @@ class Invoice extends Model implements HasMedia
             return 'customer_cannot_be_changed_after_payment_is_added';
         }
 
-        if ($request->total < $total_paid_amount) {
+        if ($request->total >= 0 && $request->total < $total_paid_amount) {
             return 'total_invoice_amount_must_be_more_than_paid_amount';
         }
 
@@ -395,13 +388,16 @@ class Invoice extends Model implements HasMedia
         $data['base_due_amount'] = $data['due_amount'] * $data['exchange_rate'];
         $data['customer_sequence_number'] = $serial->nextCustomerSequenceNumber;
 
-        $this->changeInvoiceStatus($data['due_amount']);
-
         $this->update($data);
+
+        $statusData = $this->getInvoiceStatusByAmount($data['due_amount']);
+        if (! empty($statusData)) {
+            $this->update($statusData);
+        }
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($this);
         }
 
@@ -431,7 +427,7 @@ class Invoice extends Model implements HasMedia
             'items.fields',
             'items.fields.customField',
             'customer',
-            'taxes'
+            'taxes',
         ])
             ->find($this->id);
 
@@ -456,7 +452,7 @@ class Invoice extends Model implements HasMedia
 
         return [
             'type' => 'preview',
-            'view' => new SendInvoiceMail($data)
+            'view' => new SendInvoiceMail($data),
         ];
     }
 
@@ -503,7 +499,7 @@ class Invoice extends Model implements HasMedia
                     $tax['base_amount'] = $tax['amount'] * $exchange_rate;
                     $tax['currency_id'] = $invoice->currency_id;
 
-                    if (gettype($tax['amount']) !== "NULL") {
+                    if (gettype($tax['amount']) !== 'NULL') {
                         if (array_key_exists('recurring_invoice_id', $invoiceItem)) {
                             unset($invoiceItem['recurring_invoice_id']);
                         }
@@ -529,7 +525,7 @@ class Invoice extends Model implements HasMedia
             $tax['base_amount'] = $tax['amount'] * $exchange_rate;
             $tax['currency_id'] = $invoice->currency_id;
 
-            if (gettype($tax['amount']) !== "NULL") {
+            if (gettype($tax['amount']) !== 'NULL') {
                 if (array_key_exists('recurring_invoice_id', $tax)) {
                     unset($tax['recurring_invoice_id']);
                 }
@@ -663,7 +659,7 @@ class Invoice extends Model implements HasMedia
         foreach ($templates as $key => $template) {
             $templateName = Str::before(basename($template), '.blade.php');
             $invoiceTemplates[$key]['name'] = $templateName;
-            $invoiceTemplates[$key]['path'] = vite_asset('img/PDF/'.$templateName.'.png');
+            $invoiceTemplates[$key]['path'] = Vite::asset('resources/static/img/PDF/'.$templateName.'.png');
         }
 
         return $invoiceTemplates;
@@ -685,27 +681,52 @@ class Invoice extends Model implements HasMedia
         $this->changeInvoiceStatus($this->due_amount);
     }
 
-    public function changeInvoiceStatus($amount)
+    /**
+     * Set the invoice status from amount.
+     *
+     * @return array
+     */
+    public function getInvoiceStatusByAmount($amount)
     {
         if ($amount < 0) {
-            return [
-                'error' => 'invalid_amount',
-            ];
+            return [];
         }
 
         if ($amount == 0) {
-            $this->status = Invoice::STATUS_COMPLETED;
-            $this->paid_status = Invoice::STATUS_PAID;
-            $this->overdue = false;
+            $data = [
+                'status' => Invoice::STATUS_COMPLETED,
+                'paid_status' => Invoice::STATUS_PAID,
+                'overdue' => false,
+            ];
         } elseif ($amount == $this->total) {
-            $this->status = $this->getPreviousStatus();
-            $this->paid_status = Invoice::STATUS_UNPAID;
+            $data = [
+                'status' => $this->getPreviousStatus(),
+                'paid_status' => Invoice::STATUS_UNPAID,
+            ];
         } else {
-            $this->status = $this->getPreviousStatus();
-            $this->paid_status = Invoice::STATUS_PARTIALLY_PAID;
+            $data = [
+                'status' => $this->getPreviousStatus(),
+                'paid_status' => Invoice::STATUS_PARTIALLY_PAID,
+            ];
         }
 
-        $this->save();
+        return $data;
+    }
+
+    /**
+     * Changes the invoice status right away
+     *
+     * @return string[]|void
+     */
+    public function changeInvoiceStatus($amount)
+    {
+        $status = $this->getInvoiceStatusByAmount($amount);
+        if (! empty($status)) {
+            foreach ($status as $key => $value) {
+                $this->setAttribute($key, $value);
+            }
+            $this->save();
+        }
     }
 
     public static function deleteInvoices($ids)

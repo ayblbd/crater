@@ -1,14 +1,15 @@
 <template>
   <div class="flex flex-col items-center justify-between w-full pt-10">
+
     <img
-      id="logo-crater"
-      src="/img/crater-logo.png"
-      alt="Crater Logo"
+      id="logo-invoiceshelf"
+      :src="getTickImage()"
+      alt="InvoiceShelf Logo"
       class="h-12 mb-5 md:mb-10"
     />
 
     <BaseWizard
-      :steps="7"
+      :steps="9"
       :current-step="currentStepNumber"
       @click="onNavClick"
     >
@@ -19,6 +20,7 @@
 
 <script>
 import { ref } from 'vue'
+import Step0SetLanguage from './Step0SetLanguage.vue'
 import Step1RequirementsCheck from './Step1RequirementsCheck.vue'
 import Step2PermissionCheck from './Step2PermissionCheck.vue'
 import Step3DatabaseConfig from './Step3DatabaseConfig.vue'
@@ -30,8 +32,10 @@ import Step8CompanyPreferences from './Step8CompanyPreferences.vue'
 import { useInstallationStore } from '@/scripts/admin/stores/installation'
 import { useRouter } from 'vue-router'
 
+
 export default {
   components: {
+    step_0: Step0SetLanguage,
     step_1: Step1RequirementsCheck,
     step_2: Step2PermissionCheck,
     step_3: Step3DatabaseConfig,
@@ -43,11 +47,12 @@ export default {
   },
 
   setup() {
-    let stepComponent = ref('step_1')
-    let currentStepNumber = ref(1)
+    let stepComponent = ref('step_0')
+    let currentStepNumber = ref(0)
 
     const router = useRouter()
     const installationStore = useInstallationStore()
+    const { global } = window.i18n
 
     checkCurrentProgress()
 
@@ -57,6 +62,10 @@ export default {
       if (res.data.profile_complete === 'COMPLETED') {
         router.push('/admin/dashboard')
         return
+      }
+
+      if(typeof res.data.profile_language === 'string') {
+        global.locale.value = res.data.profile_language
       }
 
       let dbstep = parseInt(res.data.profile_complete)
@@ -91,12 +100,17 @@ export default {
 
       currentStepNumber.value++
 
-      if (currentStepNumber.value <= 8) {
+      if (currentStepNumber.value <= 9) {
         stepComponent.value = 'step_' + currentStepNumber.value
       }
     }
 
     function onNavClick(e) {}
+
+    function getTickImage() {
+      const imgUrl = new URL('$images/logo.png', import.meta.url)
+      return imgUrl
+    }
 
     return {
       stepComponent,
@@ -104,6 +118,7 @@ export default {
       onStepChange,
       saveStepProgress,
       onNavClick,
+      getTickImage
     }
   },
 }

@@ -10,7 +10,7 @@
             to="/admin/dashboard"
           />
           <BaseBreadcrumbItem
-            :title="$tc('payments.payment', 2)"
+            :title="$t('payments.payment', 2)"
             to="/admin/payments"
           />
           <BaseBreadcrumbItem :title="pageTitle" to="#" active />
@@ -99,7 +99,7 @@
             :label="$t('payments.invoice')"
             :help-text="
               selectedInvoice
-                ? `Due Amount: ${
+                ? `${t('payments.amount_due')}: ${
                     paymentStore.currentPayment.maxPayableAmount / 100
                   }`
                 : ''

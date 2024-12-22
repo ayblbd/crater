@@ -1,9 +1,9 @@
 <?php
 
-use Crater\Http\Requests\InvoicesRequest;
-use Crater\Models\Invoice;
-use Crater\Models\InvoiceItem;
-use Crater\Models\Tax;
+use App\Http\Requests\InvoicesRequest;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Tax;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -50,7 +50,6 @@ test('get previous status', function () {
     $this->assertEquals('DRAFT', $status);
 });
 
-
 test('create invoice', function () {
     $invoice = Invoice::factory()->raw();
 
@@ -66,7 +65,7 @@ test('create invoice', function () {
 
     $request->replace($invoice);
 
-    $invoice_number = explode("-", $invoice['invoice_number']);
+    $invoice_number = explode('-', $invoice['invoice_number']);
     $number_attributes['invoice_number'] = $invoice_number[0].'-'.sprintf('%06d', intval($invoice_number[1]));
 
     $response = Invoice::createInvoice($request);
@@ -116,7 +115,7 @@ test('update invoice', function () {
 
     $request->replace($newInvoice);
 
-    $invoice_number = explode("-", $newInvoice['invoice_number']);
+    $invoice_number = explode('-', $newInvoice['invoice_number']);
 
     $number_attributes['invoice_number'] = $invoice_number[0].'-'.sprintf('%06d', intval($invoice_number[1]));
 
@@ -157,7 +156,7 @@ test('create items', function () {
 
     $request = new InvoicesRequest();
 
-    $request->replace(['items' => $items ]);
+    $request->replace(['items' => $items]);
 
     Invoice::createItems($invoice, $request->items);
 
@@ -184,7 +183,7 @@ test('create taxes', function () {
 
     $request = new Request();
 
-    $request->replace(['taxes' => $taxes ]);
+    $request->replace(['taxes' => $taxes]);
 
     Invoice::createTaxes($invoice, $request->taxes);
 

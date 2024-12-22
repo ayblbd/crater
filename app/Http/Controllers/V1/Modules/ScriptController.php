@@ -1,9 +1,9 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Modules;
+namespace App\Http\Controllers\V1\Modules;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Services\Module\ModuleFacade;
+use App\Http\Controllers\Controller;
+use App\Services\Module\ModuleFacade;
 use DateTime;
 use Illuminate\Support\Arr;
 use Request;
@@ -13,7 +13,6 @@ class ScriptController extends Controller
     /**
      * Serve the requested script.
      *
-     * @param  \Request  $request
      * @return \Illuminate\Http\Response
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException

@@ -1,8 +1,8 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Auth;
+namespace App\Http\Controllers\V1\Admin\Auth;
 
-use Crater\Http\Controllers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\SendsPasswordResetEmails;
 use Illuminate\Http\Request;
 
@@ -24,7 +24,6 @@ class ForgotPasswordController extends Controller
     /**
      * Get the response for a successful password reset link.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $response
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
@@ -39,14 +38,13 @@ class ForgotPasswordController extends Controller
     /**
      * Get the response for a failed password reset link.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  string  $response
      * @return \Illuminate\Http\RedirectResponse|\Illuminate\Http\JsonResponse
      */
     protected function sendResetLinkFailedResponse(Request $request, $response)
     {
         return response()->json([
-            'error' => 'Email could not be sent to this email address.'
+            'error' => 'Email could not be sent to this email address.',
         ], 403);
     }
 }

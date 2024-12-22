@@ -1,12 +1,12 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Settings;
+namespace App\Http\Controllers\V1\Admin\Settings;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\MailEnvironmentRequest;
-use Crater\Mail\TestMail;
-use Crater\Models\Setting;
-use Crater\Space\EnvironmentManager;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\MailEnvironmentRequest;
+use App\Mail\TestMail;
+use App\Models\Setting;
+use App\Space\EnvironmentManager;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Mail;
@@ -18,17 +18,12 @@ class MailConfigurationController extends Controller
      */
     protected $environmentManager;
 
-    /**
-     * @param EnvironmentManager $environmentManager
-     */
     public function __construct(EnvironmentManager $environmentManager)
     {
         $this->environmentManager = $environmentManager;
     }
 
     /**
-     *
-     * @param MailEnvironmentRequest $request
      * @return JsonResponse
      */
     public function saveMailEnvironment(MailEnvironmentRequest $request)
@@ -55,7 +50,7 @@ class MailConfigurationController extends Controller
             'mail_port' => config('mail.port'),
             'mail_username' => config('mail.username'),
             'mail_password' => config('mail.password'),
-            'mail_encryption' => config('mail.encryption'),
+            'mail_encryption' => is_null(config('mail.encryption')) ? 'none' : config('mail.encryption'),
             'from_name' => config('mail.from.name'),
             'from_mail' => config('mail.from.address'),
             'mail_mailgun_endpoint' => config('services.mailgun.endpoint'),
@@ -65,12 +60,10 @@ class MailConfigurationController extends Controller
             'mail_ses_secret' => config('services.ses.secret'),
         ];
 
-
         return response()->json($MailData);
     }
 
     /**
-     *
      * @return JsonResponse
      */
     public function getMailDrivers()

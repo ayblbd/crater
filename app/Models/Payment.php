@@ -1,31 +1,37 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
-use Barryvdh\DomPDF\Facade as PDF;
+use App\Jobs\GeneratePaymentPdfJob;
+use App\Mail\SendPaymentMail;
+use App\Services\SerialNumberFormatter;
+use App\Traits\GeneratesPdfTrait;
+use App\Traits\HasCustomFieldsTrait;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
-use Crater\Jobs\GeneratePaymentPdfJob;
-use Crater\Mail\SendPaymentMail;
-use Crater\Services\SerialNumberFormatter;
-use Crater\Traits\GeneratesPdfTrait;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Vinkla\Hashids\Facades\Hashids;
 
 class Payment extends Model implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
     use GeneratesPdfTrait;
     use HasCustomFieldsTrait;
+    use HasFactory;
+    use InteractsWithMedia;
 
     public const PAYMENT_MODE_CHECK = 'CHECK';
+
     public const PAYMENT_MODE_OTHER = 'OTHER';
+
     public const PAYMENT_MODE_CASH = 'CASH';
+
     public const PAYMENT_MODE_CREDIT_CARD = 'CREDIT_CARD';
+
     public const PAYMENT_MODE_BANK_TRANSFER = 'BANK_TRANSFER';
 
     protected $dates = ['created_at', 'updated_at', 'payment_date'];
@@ -38,10 +44,13 @@ class Payment extends Model implements HasMedia
         'paymentPdfUrl',
     ];
 
-    protected $casts = [
-        'notes' => 'string',
-        'exchange_rate' => 'float'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'notes' => 'string',
+            'exchange_rate' => 'float',
+        ];
+    }
 
     protected static function booted()
     {
@@ -65,14 +74,14 @@ class Payment extends Model implements HasMedia
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->created_at)->format($dateFormat);
+        return Carbon::parse($this->created_at)->translatedFormat($dateFormat);
     }
 
     public function getFormattedPaymentDateAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->payment_date)->format($dateFormat);
+        return Carbon::parse($this->payment_date)->translatedFormat($dateFormat);
     }
 
     public function getPaymentPdfUrlAttribute()
@@ -80,42 +89,42 @@ class Payment extends Model implements HasMedia
         return url('/payments/pdf/'.$this->unique_hash);
     }
 
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
     }
 
-    public function emailLogs()
+    public function emailLogs(): MorphMany
     {
         return $this->morphMany('App\Models\EmailLog', 'mailable');
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function invoice()
+    public function invoice(): BelongsTo
     {
         return $this->belongsTo(Invoice::class);
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo('Crater\Models\User', 'creator_id');
+        return $this->belongsTo(\App\Models\User::class, 'creator_id');
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function paymentMethod()
+    public function paymentMethod(): BelongsTo
     {
         return $this->belongsTo(PaymentMethod::class);
     }
@@ -166,7 +175,7 @@ class Payment extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$payment['currency_id'] !== $company_currency) {
+        if ((string) $payment['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($payment);
         }
 
@@ -180,7 +189,7 @@ class Payment extends Model implements HasMedia
             'customer',
             'invoice',
             'paymentMethod',
-            'fields'
+            'fields',
         ])->find($payment->id);
 
         return $payment;
@@ -218,7 +227,7 @@ class Payment extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($this);
         }
 
@@ -245,7 +254,7 @@ class Payment extends Model implements HasMedia
 
             if ($payment->invoice_id != null) {
                 $invoice = Invoice::find($payment->invoice_id);
-                $invoice->due_amount = ((int)$invoice->due_amount + (int)$payment->amount);
+                $invoice->due_amount = ((int) $invoice->due_amount + (int) $payment->amount);
 
                 if ($invoice->due_amount == $invoice->total) {
                     $invoice->paid_status = Invoice::STATUS_UNPAID;
@@ -435,7 +444,7 @@ class Payment extends Model implements HasMedia
             '{PAYMENT_DATE}' => $this->formattedPaymentDate,
             '{PAYMENT_MODE}' => $this->paymentMethod ? $this->paymentMethod->name : null,
             '{PAYMENT_NUMBER}' => $this->payment_number,
-            '{PAYMENT_AMOUNT}' => $this->reference_number,
+            '{PAYMENT_AMOUNT}' => format_money_pdf($this->amount, $this->customer->currency),
         ];
     }
 

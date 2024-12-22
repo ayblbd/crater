@@ -1,12 +1,12 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Expense;
+namespace App\Http\Controllers\V1\Admin\Expense;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\DeleteExpensesRequest;
-use Crater\Http\Requests\ExpenseRequest;
-use Crater\Http\Resources\ExpenseResource;
-use Crater\Models\Expense;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\DeleteExpensesRequest;
+use App\Http\Requests\ExpenseRequest;
+use App\Http\Resources\ExpenseResource;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 
 class ExpensesController extends Controller
@@ -30,7 +30,7 @@ class ExpensesController extends Controller
             ->select('expenses.*', 'expense_categories.name', 'customers.name as user_name')
             ->paginateData($limit);
 
-        return (ExpenseResource::collection($expenses))
+        return ExpenseResource::collection($expenses)
             ->additional(['meta' => [
                 'expense_total_count' => Expense::whereCompany()->count(),
             ]]);
@@ -39,7 +39,6 @@ class ExpensesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Crater\Http\Requests\ExpenseRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function store(ExpenseRequest $request)
@@ -54,7 +53,6 @@ class ExpensesController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \Crater\Models\Expense $expense
      * @return \Illuminate\Http\JsonResponse
      */
     public function show(Expense $expense)
@@ -67,8 +65,6 @@ class ExpensesController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Crater\Http\Requests\ExpenseRequest $request
-     * @param  \Crater\Models\Expense $expense
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(ExpenseRequest $request, Expense $expense)

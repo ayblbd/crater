@@ -2,17 +2,15 @@
 
 namespace Database\Seeders;
 
-use Crater\Models\Currency;
+use App\Models\Currency;
 use Illuminate\Database\Seeder;
 
 class CurrenciesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
-     *
-     * @return void
      */
-    public function run()
+    public function run(): void
     {
         $currencies = [
             [
@@ -39,6 +37,14 @@ class CurrenciesTableSeeder extends Seeder
                 'thousand_separator' => '.',
                 'decimal_separator' => ',',
                 'swap_currency_symbol' => true,
+            ],
+            [
+                'name' => 'Bosnia and Herzegovina Convertible Mark',
+                'code' => 'BAM',
+                'symbol' => 'KM',
+                'precision' => '2',
+                'thousand_separator' => ',',
+                'decimal_separator' => '.',
             ],
             [
                 'name' => 'South African Rand',
@@ -372,6 +378,14 @@ class CurrenciesTableSeeder extends Seeder
                 'decimal_separator' => ',',
             ],
             [
+                'name' => 'Turkmenistani manat',
+                'code' => 'TMT',
+                'symbol' => 'M ',
+                'precision' => '2',
+                'thousand_separator' => '.',
+                'decimal_separator' => ',',
+            ],
+            [
                 'name' => 'Romanian New Leu',
                 'code' => 'RON',
                 'symbol' => 'RON',
@@ -600,8 +614,15 @@ class CurrenciesTableSeeder extends Seeder
                 'decimal_separator' => ',',
                 'swap_currency_symbol' => true,
             ],
+            [
+                'name' => 'Libyan Dinar',
+                'code' => 'LYD',
+                'symbol' => 'LD',
+                'precision' => '3',
+                'thousand_separator' => ',',
+                'decimal_separator' => '.',
+            ],
         ];
-
 
         foreach ($currencies as $currency) {
             Currency::create($currency);

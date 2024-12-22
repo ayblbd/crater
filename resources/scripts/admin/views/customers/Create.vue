@@ -6,7 +6,7 @@
           <BaseBreadcrumbItem :title="$t('general.home')" to="dashboard" />
 
           <BaseBreadcrumbItem
-            :title="$tc('customers.customer', 2)"
+            :title="$t('customers.customer', 2)"
             to="/admin/customers"
           />
 
@@ -157,6 +157,19 @@
                 @input="v$.currentCustomer.prefix.$touch()"
               />
             </BaseInputGroup>
+
+            <BaseInputGroup
+              :label="$t('customers.tax_id')"
+              :content-loading="isFetchingInitialData"
+            >
+              <BaseInput
+                v-model="customerStore.currentCustomer.tax_id"
+                :content-loading="isFetchingInitialData"
+                type="text"
+                name="tax_id"
+              />
+            </BaseInputGroup>
+
           </BaseInputGrid>
         </div>
 
@@ -231,7 +244,7 @@
                 v$.currentCustomer.confirm_password.$errors[0].$message
               "
               :content-loading="isFetchingInitialData"
-              label="Confirm Password"
+              :label="$t('customers.confirm_password')"
             >
               <BaseInput
                 v-model.trim="customerStore.currentCustomer.confirm_password"

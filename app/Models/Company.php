@@ -1,9 +1,13 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Silber\Bouncer\BouncerFacade;
 use Silber\Bouncer\Database\Role;
 use Spatie\MediaLibrary\HasMedia;
@@ -11,15 +15,15 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Company extends Model implements HasMedia
 {
+    use HasFactory;
     use InteractsWithMedia;
 
-    use HasFactory;
-
     protected $guarded = [
-        'id'
+        'id',
     ];
 
     public const COMPANY_LEVEL = 'company_level';
+
     public const CUSTOMER_LEVEL = 'customer_level';
 
     protected $appends = ['logo', 'logo_path'];
@@ -58,97 +62,97 @@ class Company extends Model implements HasMedia
         return null;
     }
 
-    public function customers()
+    public function customers(): HasMany
     {
         return $this->hasMany(Customer::class);
     }
 
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'owner_id');
     }
 
-    public function settings()
+    public function settings(): HasMany
     {
         return $this->hasMany(CompanySetting::class);
     }
 
-    public function recurringInvoices()
+    public function recurringInvoices(): HasMany
     {
         return $this->hasMany(RecurringInvoice::class);
     }
 
-    public function customFields()
+    public function customFields(): HasMany
     {
         return $this->hasMany(CustomField::class);
     }
 
-    public function customFieldValues()
+    public function customFieldValues(): HasMany
     {
         return $this->hasMany(CustomFieldValue::class);
     }
 
-    public function exchangeRateLogs()
+    public function exchangeRateLogs(): HasMany
     {
         return $this->hasMany(ExchangeRateLog::class);
     }
 
-    public function exchangeRateProviders()
+    public function exchangeRateProviders(): HasMany
     {
         return $this->hasMany(ExchangeRateProvider::class);
     }
 
-    public function invoices()
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
-    public function expenses()
+    public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);
     }
 
-    public function units()
+    public function units(): HasMany
     {
         return $this->hasMany(Unit::class);
     }
 
-    public function expenseCategories()
+    public function expenseCategories(): HasMany
     {
         return $this->hasMany(ExpenseCategory::class);
     }
 
-    public function taxTypes()
+    public function taxTypes(): HasMany
     {
         return $this->hasMany(TaxType::class);
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(Item::class);
     }
 
-    public function payments()
+    public function payments(): HasMany
     {
         return $this->hasMany(Payment::class);
     }
 
-    public function paymentMethods()
+    public function paymentMethods(): HasMany
     {
         return $this->hasMany(PaymentMethod::class);
     }
 
-    public function estimates()
+    public function estimates(): HasMany
     {
         return $this->hasMany(Estimate::class);
     }
 
-    public function address()
+    public function address(): HasOne
     {
         return $this->hasOne(Address::class);
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'user_company', 'company_id', 'user_id');
     }
@@ -160,7 +164,7 @@ class Company extends Model implements HasMedia
         $super_admin = BouncerFacade::role()->firstOrCreate([
             'name' => 'super admin',
             'title' => 'Super Admin',
-            'scope' => $this->id
+            'scope' => $this->id,
         ]);
 
         foreach (config('abilities.abilities') as $ability) {
@@ -223,7 +227,7 @@ class Company extends Model implements HasMedia
             'fiscal_year' => '1-12',
             'carbon_date_format' => 'Y/m/d',
             'moment_date_format' => 'YYYY/MM/DD',
-            'notification_email' => 'noreply@crater.in',
+            'notification_email' => 'noreply@invoiceshelf.com',
             'notify_invoice_viewed' => 'NO',
             'notify_estimate_viewed' => 'NO',
             'tax_per_item' => 'NO',
@@ -291,7 +295,6 @@ class Company extends Model implements HasMedia
         if ($this->customFieldValues()->exists()) {
             $this->customFieldValues()->delete();
         }
-
 
         if ($this->customFields()->exists()) {
             $this->customFields()->delete();

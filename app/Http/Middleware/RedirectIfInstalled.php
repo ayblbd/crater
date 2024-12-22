@@ -1,22 +1,23 @@
 <?php
 
-namespace Crater\Http\Middleware;
+namespace App\Http\Middleware;
 
+use App\Models\Setting;
+use App\Space\InstallUtils;
 use Closure;
-use Crater\Models\Setting;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class RedirectIfInstalled
 {
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
+    public function handle(Request $request, Closure $next): Response
     {
-        if (\Storage::disk('local')->has('database_created')) {
+        if (InstallUtils::dbMarkerExists()) {
             if (Setting::getSetting('profile_complete') === 'COMPLETED') {
                 return redirect('login');
             }

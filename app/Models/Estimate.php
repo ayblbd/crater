@@ -1,17 +1,21 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
 use App;
-use Barryvdh\DomPDF\Facade as PDF;
+use App\Mail\SendEstimateMail;
+use App\Services\SerialNumberFormatter;
+use App\Traits\GeneratesPdfTrait;
+use App\Traits\HasCustomFieldsTrait;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Carbon\Carbon;
-use Crater\Mail\SendEstimateMail;
-use Crater\Services\SerialNumberFormatter;
-use Crater\Traits\GeneratesPdfTrait;
-use Crater\Traits\HasCustomFieldsTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -19,16 +23,21 @@ use Vinkla\Hashids\Facades\Hashids;
 
 class Estimate extends Model implements HasMedia
 {
-    use HasFactory;
-    use InteractsWithMedia;
     use GeneratesPdfTrait;
     use HasCustomFieldsTrait;
+    use HasFactory;
+    use InteractsWithMedia;
 
     public const STATUS_DRAFT = 'DRAFT';
+
     public const STATUS_SENT = 'SENT';
+
     public const STATUS_VIEWED = 'VIEWED';
+
     public const STATUS_EXPIRED = 'EXPIRED';
+
     public const STATUS_ACCEPTED = 'ACCEPTED';
+
     public const STATUS_REJECTED = 'REJECTED';
 
     protected $dates = [
@@ -36,7 +45,7 @@ class Estimate extends Model implements HasMedia
         'updated_at',
         'deleted_at',
         'estimate_date',
-        'expiry_date'
+        'expiry_date',
     ];
 
     protected $appends = [
@@ -47,51 +56,54 @@ class Estimate extends Model implements HasMedia
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'total' => 'integer',
-        'tax' => 'integer',
-        'sub_total' => 'integer',
-        'discount' => 'float',
-        'discount_val' => 'integer',
-        'exchange_rate' => 'float'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'total' => 'integer',
+            'tax' => 'integer',
+            'sub_total' => 'integer',
+            'discount' => 'float',
+            'discount_val' => 'integer',
+            'exchange_rate' => 'float',
+        ];
+    }
 
     public function getEstimatePdfUrlAttribute()
     {
         return url('/estimates/pdf/'.$this->unique_hash);
     }
 
-    public function emailLogs()
+    public function emailLogs(): MorphMany
     {
         return $this->morphMany('App\Models\EmailLog', 'mailable');
     }
 
-    public function items()
+    public function items(): HasMany
     {
-        return $this->hasMany('Crater\Models\EstimateItem');
+        return $this->hasMany(\App\Models\EstimateItem::class);
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer_id');
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
-        return $this->belongsTo('Crater\Models\User', 'creator_id');
+        return $this->belongsTo(\App\Models\User::class, 'creator_id');
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
-        return $this->belongsTo('Crater\Models\Company');
+        return $this->belongsTo(\App\Models\Company::class);
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
 
-    public function taxes()
+    public function taxes(): HasMany
     {
         return $this->hasMany(Tax::class);
     }
@@ -100,14 +112,14 @@ class Estimate extends Model implements HasMedia
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->expiry_date)->format($dateFormat);
+        return Carbon::parse($this->expiry_date)->translatedFormat($dateFormat);
     }
 
     public function getFormattedEstimateDateAttribute($value)
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->estimate_date)->format($dateFormat);
+        return Carbon::parse($this->estimate_date)->translatedFormat($dateFormat);
     }
 
     public function scopeEstimatesBetween($query, $start, $end)
@@ -227,7 +239,7 @@ class Estimate extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($estimate);
         }
 
@@ -263,7 +275,7 @@ class Estimate extends Model implements HasMedia
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($this);
         }
 
@@ -289,12 +301,12 @@ class Estimate extends Model implements HasMedia
         }
 
         return Estimate::with([
-                'items.taxes',
-                'items.fields',
-                'items.fields.customField',
-                'customer',
-                'taxes'
-            ])
+            'items.taxes',
+            'items.fields',
+            'items.fields.customField',
+            'customer',
+            'taxes',
+        ])
             ->find($this->id);
     }
 
@@ -314,7 +326,7 @@ class Estimate extends Model implements HasMedia
 
             if (array_key_exists('taxes', $estimateItem) && $estimateItem['taxes']) {
                 foreach ($estimateItem['taxes'] as $tax) {
-                    if (gettype($tax['amount']) !== "NULL") {
+                    if (gettype($tax['amount']) !== 'NULL') {
                         $tax['company_id'] = $request->header('company');
                         $item->taxes()->create($tax);
                     }
@@ -332,7 +344,7 @@ class Estimate extends Model implements HasMedia
         $estimateTaxes = $request->taxes;
 
         foreach ($estimateTaxes as $tax) {
-            if (gettype($tax['amount']) !== "NULL") {
+            if (gettype($tax['amount']) !== 'NULL') {
                 $tax['company_id'] = $request->header('company');
                 $tax['exchange_rate'] = $exchange_rate;
                 $tax['base_amount'] = $tax['amount'] * $exchange_rate;
@@ -495,7 +507,7 @@ class Estimate extends Model implements HasMedia
         foreach ($templates as $key => $template) {
             $templateName = Str::before(basename($template), '.blade.php');
             $estimateTemplates[$key]['name'] = $templateName;
-            $estimateTemplates[$key]['path'] = vite_asset('/img/PDF/'.$templateName.'.png');
+            $estimateTemplates[$key]['path'] = Vite::asset('resources/static/img/PDF/'.$templateName.'.png');
         }
 
         return $estimateTemplates;

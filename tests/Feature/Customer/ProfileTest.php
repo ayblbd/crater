@@ -2,12 +2,13 @@
 
 namespace Tests\Feature\Customer;
 
-use Crater\Http\Controllers\V1\Customer\General\ProfileController;
-use Crater\Http\Requests\Customer\CustomerProfileRequest;
-use Crater\Models\Customer;
+use App\Http\Controllers\V1\Customer\General\ProfileController;
+use App\Http\Requests\Customer\CustomerProfileRequest;
+use App\Models\Customer;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Sanctum\Sanctum;
+
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
@@ -38,19 +39,19 @@ test('update customer profile', function () {
     $newCustomer = Customer::factory()->raw([
         'shipping' => [
             'name' => 'newName',
-            'address_street_1' => 'address'
+            'address_street_1' => 'address',
         ],
         'billing' => [
             'name' => 'newName',
-            'address_street_1' => 'address'
-        ]
+            'address_street_1' => 'address',
+        ],
     ]);
 
     postJson("api/v1/{$customer->company->slug}/customer/profile", $newCustomer)->assertOk();
 
     $this->assertDatabaseHas('customers', [
         'name' => $customer['name'],
-        'email' => $customer['email']
+        'email' => $customer['email'],
     ]);
 });
 

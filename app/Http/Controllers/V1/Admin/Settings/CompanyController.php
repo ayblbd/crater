@@ -1,21 +1,22 @@
 <?php
 
-namespace Crater\Http\Controllers\V1\Admin\Settings;
+namespace App\Http\Controllers\V1\Admin\Settings;
 
-use Crater\Http\Controllers\Controller;
-use Crater\Http\Requests\AvatarRequest;
-use Crater\Http\Requests\CompanyLogoRequest;
-use Crater\Http\Requests\CompanyRequest;
-use Crater\Http\Requests\ProfileRequest;
-use Crater\Http\Resources\CompanyResource;
-use Crater\Http\Resources\UserResource;
-use Crater\Models\Company;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AvatarRequest;
+use App\Http\Requests\CompanyLogoRequest;
+use App\Http\Requests\CompanyRequest;
+use App\Http\Requests\ProfileRequest;
+use App\Http\Resources\CompanyResource;
+use App\Http\Resources\UserResource;
+use App\Models\Company;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
     /**
      * Retrive the Admin account.
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function getUser(Request $request)
@@ -27,7 +28,6 @@ class CompanyController extends Controller
      * Update the Admin profile.
      * Includes name, email and (or) password
      *
-     * @param  \Crater\Http\Requests\ProfileRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateProfile(ProfileRequest $request)
@@ -41,7 +41,7 @@ class CompanyController extends Controller
 
     /**
      * Update Admin Company Details
-     * @param \Crater\Http\Requests\CompanyRequest $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function updateCompany(CompanyRequest $request)
@@ -60,7 +60,6 @@ class CompanyController extends Controller
     /**
      * Upload the company logo to storage.
      *
-     * @param  \Crater\Http\Requests\CompanyLogoRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function uploadCompanyLogo(CompanyLogoRequest $request)
@@ -94,7 +93,6 @@ class CompanyController extends Controller
     /**
      * Upload the Admin Avatar to public storage.
      *
-     * @param  \Crater\Http\Requests\AvatarRequest $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function uploadAvatar(AvatarRequest $request)

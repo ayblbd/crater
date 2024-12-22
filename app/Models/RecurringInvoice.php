@@ -1,61 +1,70 @@
 <?php
 
-namespace Crater\Models;
+namespace App\Models;
 
+use App\Http\Requests\RecurringInvoiceRequest;
+use App\Services\SerialNumberFormatter;
+use App\Traits\HasCustomFieldsTrait;
 use Carbon\Carbon;
-use Crater\Http\Requests\RecurringInvoiceRequest;
-use Crater\Services\SerialNumberFormatter;
-use Crater\Traits\HasCustomFieldsTrait;
 use Cron;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Vinkla\Hashids\Facades\Hashids;
 
 class RecurringInvoice extends Model
 {
-    use HasFactory;
     use HasCustomFieldsTrait;
+    use HasFactory;
 
     protected $guarded = [
         'id',
     ];
 
     protected $dates = [
-        'starts_at'
+        'starts_at',
     ];
 
     public const NONE = 'NONE';
+
     public const COUNT = 'COUNT';
+
     public const DATE = 'DATE';
 
     public const COMPLETED = 'COMPLETED';
+
     public const ON_HOLD = 'ON_HOLD';
+
     public const ACTIVE = 'ACTIVE';
 
     protected $appends = [
         'formattedCreatedAt',
         'formattedStartsAt',
         'formattedNextInvoiceAt',
-        'formattedLimitDate'
+        'formattedLimitDate',
     ];
 
-    protected $casts = [
-        'exchange_rate' => 'float',
-        'send_automatically' => 'boolean'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'exchange_rate' => 'float',
+            'send_automatically' => 'boolean',
+        ];
+    }
 
     public function getFormattedStartsAtAttribute()
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->starts_at)->format($dateFormat);
+        return Carbon::parse($this->starts_at)->translatedFormat($dateFormat);
     }
 
     public function getFormattedNextInvoiceAtAttribute()
     {
         $dateFormat = CompanySetting::getSetting('carbon_date_format', $this->company_id);
 
-        return Carbon::parse($this->next_invoice_at)->format($dateFormat);
+        return Carbon::parse($this->next_invoice_at)->translatedFormat($dateFormat);
     }
 
     public function getFormattedLimitDateAttribute()
@@ -72,37 +81,37 @@ class RecurringInvoice extends Model
         return Carbon::parse($this->created_at)->format($dateFormat);
     }
 
-    public function invoices()
+    public function invoices(): HasMany
     {
         return $this->hasMany(Invoice::class);
     }
 
-    public function taxes()
+    public function taxes(): HasMany
     {
         return $this->hasMany(Tax::class);
     }
 
-    public function items()
+    public function items(): HasMany
     {
         return $this->hasMany(InvoiceItem::class);
     }
 
-    public function customer()
+    public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-    public function company()
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }
 
-    public function creator()
+    public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function currency()
+    public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
     }
@@ -190,7 +199,7 @@ class RecurringInvoice extends Model
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$recurringInvoice['currency_id'] !== $company_currency) {
+        if ((string) $recurringInvoice['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($recurringInvoice);
         }
 
@@ -215,7 +224,7 @@ class RecurringInvoice extends Model
 
         $company_currency = CompanySetting::getSetting('currency', $request->header('company'));
 
-        if ((string)$data['currency_id'] !== $company_currency) {
+        if ((string) $data['currency_id'] !== $company_currency) {
             ExchangeRateLog::addExchangeRateLog($this);
         }
 
@@ -242,7 +251,7 @@ class RecurringInvoice extends Model
             if (array_key_exists('taxes', $invoiceItem) && $invoiceItem['taxes']) {
                 foreach ($invoiceItem['taxes'] as $tax) {
                     $tax['company_id'] = $recurringInvoice->company_id;
-                    if (gettype($tax['amount']) !== "NULL") {
+                    if (gettype($tax['amount']) !== 'NULL') {
                         $item->taxes()->create($tax);
                     }
                 }
@@ -255,7 +264,7 @@ class RecurringInvoice extends Model
         foreach ($taxes as $tax) {
             $tax['company_id'] = $recurringInvoice->company_id;
 
-            if (gettype($tax['amount']) !== "NULL") {
+            if (gettype($tax['amount']) !== 'NULL') {
                 $recurringInvoice->taxes()->create($tax);
             }
         }
@@ -305,9 +314,9 @@ class RecurringInvoice extends Model
             ->setCustomer($this->customer_id)
             ->setNextNumbers();
 
-        $days = CompanySetting::getSetting('invoice_due_date_days', $this->company_id);
+        $days = intval(CompanySetting::getSetting('invoice_due_date_days', $this->company_id));
 
-        if (! $days || $days == "null") {
+        if (! $days || $days == 'null') {
             $days = 7;
         }
 
@@ -359,7 +368,7 @@ class RecurringInvoice extends Model
             foreach ($this->fields as $data) {
                 $customField[] = [
                     'id' => $data->custom_field_id,
-                    'value' => $data->defaultAnswer
+                    'value' => $data->defaultAnswer,
                 ];
             }
 
@@ -372,10 +381,10 @@ class RecurringInvoice extends Model
                 'body' => CompanySetting::getSetting('invoice_mail_body', $this->company_id),
                 'from' => config('mail.from.address'),
                 'to' => $this->customer->email,
-                'subject' => 'New Invoice',
+                'subject' => trans('invoices')['new_invoice'],
                 'invoice' => $invoice->toArray(),
                 'customer' => $invoice->customer->toArray(),
-                'company' => Company::find($invoice->company_id)
+                'company' => Company::find($invoice->company_id),
             ];
 
             $invoice->send($data);

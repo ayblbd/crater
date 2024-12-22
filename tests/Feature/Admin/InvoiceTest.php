@@ -1,12 +1,12 @@
 <?php
 
-use Crater\Http\Controllers\V1\Admin\Invoice\InvoicesController;
-use Crater\Http\Requests\InvoicesRequest;
-use Crater\Mail\SendInvoiceMail;
-use Crater\Models\Invoice;
-use Crater\Models\InvoiceItem;
-use Crater\Models\Tax;
-use Crater\Models\User;
+use App\Http\Controllers\V1\Admin\Invoice\InvoicesController;
+use App\Http\Requests\InvoicesRequest;
+use App\Mail\SendInvoiceMail;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
+use App\Models\Tax;
+use App\Models\User;
 use Illuminate\Support\Facades\Artisan;
 use Laravel\Sanctum\Sanctum;
 
@@ -57,8 +57,69 @@ test('create invoice', function () {
 
     $this->assertDatabaseHas('invoice_items', [
         'item_id' => $invoice['items'][0]['item_id'],
-        'name' => $invoice['items'][0]['name']
+        'name' => $invoice['items'][0]['name'],
     ]);
+});
+
+test('create invoice with negative and zero item quantities', function () {
+    $invoice = Invoice::factory()->raw([
+        'items' => [
+            InvoiceItem::factory()->raw([
+                'quantity' => -2,
+                'price' => 100,
+            ]),
+            InvoiceItem::factory()->raw([
+                'quantity' => 1,
+                'price' => 50,
+            ]),
+            InvoiceItem::factory()->raw([
+                'quantity' => 0,
+                'price' => 75,
+            ]),
+        ],
+        'sub_total' => -150,
+        'total' => -150,
+    ]);
+
+    $response = postJson('api/v1/invoices', $invoice);
+
+    $response->assertOk();
+
+    $this->assertDatabaseHas('invoices', [
+        'total' => -150,
+        'sub_total' => -150,
+    ]);
+
+    $this->assertDatabaseHas('invoice_items', [
+        'quantity' => -2,
+        'total' => -200,
+    ]);
+
+    $this->assertDatabaseHas('invoice_items', [
+        'quantity' => 1,
+        'total' => 50,
+    ]);
+
+    $this->assertDatabaseHas('invoice_items', [
+        'quantity' => 0,
+        'total' => 0,
+    ]);
+
+    $createdInvoice = Invoice::where('total', -150)->first();
+    $this->assertNotNull($createdInvoice);
+    $this->assertEquals(3, $createdInvoice->items()->count());
+
+    $negativeItem = $createdInvoice->items()->where('quantity', -2)->first();
+    $this->assertNotNull($negativeItem);
+    $this->assertEquals(-200, $negativeItem->total);
+
+    $positiveItem = $createdInvoice->items()->where('quantity', 1)->first();
+    $this->assertNotNull($positiveItem);
+    $this->assertEquals(50, $positiveItem->total);
+
+    $zeroItem = $createdInvoice->items()->where('quantity', 0)->first();
+    $this->assertNotNull($zeroItem);
+    $this->assertEquals(0, $zeroItem->total);
 });
 
 test('create invoice as sent', function () {
@@ -84,7 +145,7 @@ test('create invoice as sent', function () {
 
     $this->assertDatabaseHas('invoice_items', [
         'item_id' => $invoice['items'][0]['item_id'],
-        'name' => $invoice['items'][0]['name']
+        'name' => $invoice['items'][0]['name'],
     ]);
 });
 
@@ -122,7 +183,7 @@ test('update invoice', function () {
 
     $this->assertDatabaseHas('invoice_items', [
         'item_id' => $invoice2['items'][0]['item_id'],
-        'name' => $invoice2['items'][0]['name']
+        'name' => $invoice2['items'][0]['name'],
     ]);
 });
 
@@ -242,7 +303,7 @@ test('delete multiple invoices', function () {
         ]);
 
     foreach ($invoices as $invoice) {
-        $this->assertDeleted($invoice);
+        $this->assertModelMissing($invoice);
     }
 });
 
@@ -260,7 +321,7 @@ test('create invoice with negative tax', function () {
     $invoice = Invoice::factory()
         ->raw([
             'taxes' => [Tax::factory()->raw([
-                'percent' => -9.99
+                'percent' => -9.99,
             ])],
             'items' => [InvoiceItem::factory()->raw()],
         ]);
@@ -283,23 +344,23 @@ test('create invoice with negative tax', function () {
     ]);
 
     $this->assertDatabaseHas('taxes', [
-        'tax_type_id' => $invoice['taxes'][0]['tax_type_id']
+        'tax_type_id' => $invoice['taxes'][0]['tax_type_id'],
     ]);
 });
 
 test('create invoice with tax per item', function () {
     $invoice = Invoice::factory()
         ->raw([
-                'tax_per_item' => 'YES',
-                'items' => [
-                    InvoiceItem::factory()->raw([
-                        'taxes' => [Tax::factory()->raw()],
-                    ]),
-                    InvoiceItem::factory()->raw([
-                        'taxes' => [Tax::factory()->raw()],
-                    ]),
-                ],
-            ]);
+            'tax_per_item' => 'YES',
+            'items' => [
+                InvoiceItem::factory()->raw([
+                    'taxes' => [Tax::factory()->raw()],
+                ]),
+                InvoiceItem::factory()->raw([
+                    'taxes' => [Tax::factory()->raw()],
+                ]),
+            ],
+        ]);
 
     $response = postJson('api/v1/invoices', $invoice);
 
@@ -319,7 +380,7 @@ test('create invoice with tax per item', function () {
     ]);
 
     $this->assertDatabaseHas('taxes', [
-        'tax_type_id' => $invoice['items'][0]['taxes'][0]['tax_type_id']
+        'tax_type_id' => $invoice['items'][0]['taxes'][0]['tax_type_id'],
     ]);
 });
 
@@ -373,12 +434,12 @@ test('create invoice with EUR currency', function () {
 
     $this->assertDatabaseHas('taxes', [
         'tax_type_id' => $invoice['taxes'][0]['tax_type_id'],
-        'amount' => $invoice['tax']
+        'amount' => $invoice['tax'],
     ]);
 
     $this->assertDatabaseHas('invoice_items', [
         'item_id' => $invoice['items'][0]['item_id'],
-        'name' => $invoice['items'][0]['name']
+        'name' => $invoice['items'][0]['name'],
     ]);
 });
 
@@ -387,9 +448,9 @@ test('update invoice with EUR currency', function () {
         ->hasItems(1)
         ->hasTaxes(1)
         ->create([
-        'invoice_date' => '1988-07-18',
-        'due_date' => '1988-08-18',
-    ]);
+            'invoice_date' => '1988-07-18',
+            'due_date' => '1988-08-18',
+        ]);
 
     $invoice2 = Invoice::factory()
         ->raw([
